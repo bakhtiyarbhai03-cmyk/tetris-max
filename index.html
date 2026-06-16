@@ -6,58 +6,269 @@
     <title>Neon Tetris Universe</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f0f13">
+    <meta name="theme-color" content="#020412">
     <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link rel="apple-touch-icon" href="logo.svg">
 
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Fonts: Orbitron for titles/headers, Poppins for clean UI text -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     
     <style>
         :root {
-            --bg-color: #0f0f13;
-            --panel-bg: #1a1a24;
+            --bg-color: #020412;
+            --panel-bg: #060b26;
+            --panel-border: #143d78;
             --accent: #00e5ff;
+            --accent-purple: #9d4edd;
             --text: #e0e0e0;
+            --font-ui: 'Poppins', sans-serif;
+            --font-game: 'Orbitron', sans-serif;
         }
 
         body {
             margin: 0; padding: 0;
             background-color: var(--bg-color);
             color: var(--text);
-            font-family: 'Orbitron', sans-serif;
+            font-family: var(--font-ui);
             display: flex; justify-content: center; align-items: center;
             height: 100vh; width: 100vw; overflow: hidden; touch-action: none;
+            position: relative;
         }
 
-        /* Responsive Viewport Virtual Matrix Engine */
+        /* Subtle Dark Grid Pattern */
+        .bg-grid {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(rgba(0, 229, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -2;
+        }
+
+        /* Floating Blocks */
+        .floating-blocks {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: -1; pointer-events: none;
+        }
+        .shape {
+            position: absolute; width: 60px; height: 60px;
+            border-radius: 8px; animation: floatUp linear infinite; opacity: 0;
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.4), 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .shape-1 { left: 5%; background: #4caf50; animation-duration: 25s; animation-delay: 0s; clip-path: polygon(0 50%, 50% 50%, 50% 0, 100% 0, 100% 100%, 0 100%); }
+        .shape-2 { left: 85%; background: #9c27b0; animation-duration: 28s; animation-delay: 5s; width: 40px; height: 80px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+        .shape-3 { left: 15%; background: #2196f3; animation-duration: 22s; animation-delay: 12s; width: 80px; height: 40px; }
+        .shape-4 { left: 75%; background: #ff9800; animation-duration: 35s; animation-delay: 2s; clip-path: polygon(33% 0, 66% 0, 66% 50%, 100% 50%, 100% 100%, 0 100%, 0 50%, 33% 50%); }
+        @keyframes floatUp { 0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.8; } 90% { opacity: 0.8; } 100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } }
+
+        /* Responsive Viewport Engine */
         #super-wrapper {
             display: flex; flex-direction: column; align-items: center;
-            width: 400px; height: 620px;
-            position: relative; flex-shrink: 0;
-            box-sizing: border-box;
+            width: 400px; height: 680px; position: relative; flex-shrink: 0;
+            box-sizing: border-box; z-index: 10;
         }
 
+        /* Top Bar */
         header {
-            text-align: center; margin-top: 5px;
-            font-size: 1.5rem; font-weight: 900;
-            text-transform: uppercase; letter-spacing: 3px;
-            color: var(--accent); text-shadow: 0 0 15px var(--accent);
-            display: flex; justify-content: center; align-items: center; gap: 15px; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; padding: 10px 20px; box-sizing: border-box; z-index: 20;
+            margin-bottom: 5px; flex-shrink: 0;
+        }
+        .icon-btn {
+            background: #09122b; border: 1px solid #1c3b6b; color: #fff;
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.2rem; cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .icon-btn:active { transform: scale(0.9); }
+
+        /* Thick 3D AAA Title */
+        .premium-title {
+            font-size: 4rem; font-weight: 900; letter-spacing: 1px; flex-shrink: 0;
+            display: flex; justify-content: center; font-family: var(--font-game);
+            margin: 0 0 15px 0; z-index: 20;
+        }
+        .premium-title span {
+            display: inline-block;
+            text-shadow: 0 2px 0px rgba(0,0,0,0.6), 0 4px 0px rgba(0,0,0,0.5), 
+                         0 6px 0px rgba(0,0,0,0.4), 0 10px 15px rgba(0,0,0,0.8);
+        }
+        .t-red { color: #ff3333; } .t-org { color: #ffaa00; } .t-grn { color: #66cc00; }
+        .t-blu { color: #3399ff; } .t-pur { color: #9933ff; } .t-pnk { color: #ff3399; }
+
+        /* Main Glass Menu Panel - OVERFLOW FIX APPLIED HERE */
+        .glass-panel {
+            background: var(--panel-bg); border: 1px solid var(--panel-border);
+            border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset 0 2px 5px rgba(0,229,255,0.1);
+            display: flex; flex-direction: column; box-sizing: border-box;
+            width: 95%; max-height: 85vh; padding: 15px; overflow: hidden;
         }
 
-        .util-btn {
-            background: none; border: 1px solid var(--accent);
-            color: var(--accent); border-radius: 5px;
-            padding: 5px 10px; cursor: pointer; font-family: inherit;
-            box-shadow: 0 0 5px var(--accent);
-        }
-        .util-btn:active { background: var(--accent); color: #000; }
+        #mode-menu { position: relative; z-index: 1000; }
 
-        #game-container {
-            display: flex; flex-direction: row; justify-content: center;
-            align-items: flex-start; gap: 10px; margin-top: 10px; position: relative; width: 100%;
+        /* Neon Section Dividers */
+        .divider {
+            display: flex; align-items: center; text-align: center; width: 100%;
+            color: #fff; font-family: var(--font-game); font-size: 0.85rem; letter-spacing: 1px;
+            margin: 0 0 10px 0; flex-shrink: 0;
         }
+        .divider::before, .divider::after {
+            content: ''; flex: 1; border-bottom: 2px solid; 
+            margin: 0 15px; box-shadow: 0 0 5px var(--accent);
+        }
+        .divider::before { border-image: linear-gradient(to left, var(--accent), transparent) 1; }
+        .divider::after { border-image: linear-gradient(to right, var(--accent), transparent) 1; }
+
+        .divider.purple::before { border-image: linear-gradient(to left, var(--accent-purple), transparent) 1; box-shadow: 0 0 5px var(--accent-purple); }
+        .divider.purple::after { border-image: linear-gradient(to right, var(--accent-purple), transparent) 1; box-shadow: 0 0 5px var(--accent-purple); }
+
+        /* Premium Mode Cards - FLEX SCROLL FIX */
+        .mode-list {
+            display: flex; flex-direction: column; gap: 10px; 
+            flex: 1; min-height: 50px; overflow-y: auto; touch-action: pan-y; margin-bottom: 15px;
+            padding-right: 5px;
+        }
+        .mode-list::-webkit-scrollbar { width: 4px; }
+        .mode-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+        .mode-card {
+            background: #09132e; border: 1px solid #1a4f8b; border-radius: 12px;
+            padding: 12px 15px; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .mode-card:hover, .mode-card.selected { background: #0c1b42; border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
+        
+        .mode-card-left { display: flex; align-items: center; gap: 15px; }
+        .mode-icon-box {
+            width: 35px; height: 35px; border-radius: 6px; display: flex;
+            justify-content: center; align-items: center; flex-shrink: 0;
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.3);
+        }
+        .mode-details { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+        .mode-title { font-size: 1.1rem; font-family: var(--font-game); font-weight: 800; color: #fff; letter-spacing: 0.5px; }
+        
+        .badge { font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; border: 1px solid;}
+        .badge-easy { background: rgba(0, 230, 118, 0.15); color: #00e676; border-color: rgba(0, 230, 118, 0.5); }
+        .badge-med { background: rgba(255, 214, 0, 0.15); color: #ffd600; border-color: rgba(255, 214, 0, 0.5); }
+        .badge-hard { background: rgba(255, 23, 68, 0.15); color: #ff1744; border-color: rgba(255, 23, 68, 0.5); }
+
+        .mode-desc { font-size: 0.75rem; color: #8892b0; margin-top: 2px; }
+        .mode-chevron { color: #fff; font-size: 1.2rem; font-weight: bold; }
+
+        /* Custom Mode Colors */
+        .card-classic { background: #071533; border-color: #1a4f8b; }
+        .card-classic .mode-icon-box { background: #2196f3; border: 1px solid #64b5f6; }
+        .card-rising { background: #130a2b; border-color: #4a2185; }
+        .card-rising .mode-icon-box { background: #9c27b0; border: 1px solid #ce93d8; }
+
+        /* Multiplayer 3-Grid System */
+        .mp-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; width: 100%; margin-bottom: 10px; flex-shrink: 0;}
+        .mp-box {
+            border-radius: 12px; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; padding: 12px 5px; cursor: pointer; border: 1px solid transparent; 
+            color: #fff; text-align: center; transition: 0.1s; box-sizing: border-box;
+        }
+        .mp-box:active { transform: scale(0.95); }
+        
+        .mp-host, .mp-join { background: linear-gradient(180deg, #6a1b9a, #4a148c); border-color: #8e24aa; box-shadow: 0 5px 15px rgba(106, 27, 154, 0.3); }
+        .mp-code { background: #050a1a; border-color: #1a4f8b; cursor: default; }
+        .mp-code:active { transform: none; }
+        
+        .mp-icon { font-size: 1.2rem; margin-bottom: 2px; }
+        .mp-title { font-size: 0.85rem; font-weight: 800; font-family: var(--font-game); letter-spacing: 1px; }
+        .mp-sub { font-size: 0.65rem; color: #aaa; margin-top: 2px;}
+        
+        .mp-code input { 
+            background: transparent; border: none; color: #fff; font-family: var(--font-ui);
+            font-weight: 800; width: 100%; text-align: center; outline: none; font-size: 1rem; text-transform: uppercase;
+        }
+        .mp-code input::placeholder { color: #6a7b9c; font-weight: 600; }
+
+        /* Hero Start Button - PADDING/MARGIN FIX */
+        .btn-start-hero {
+            background: linear-gradient(180deg, #00c853, #00802b);
+            border: 1px solid #00e676; border-radius: 12px; width: 100%; padding: 12px; 
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            color: #fff; cursor: pointer; box-shadow: 0 6px 20px rgba(0, 200, 83, 0.3);
+            transition: 0.2s; box-sizing: border-box; flex-shrink: 0;
+        }
+        .btn-start-hero:active { transform: scale(0.97); }
+        .btn-start-hero .icon { font-size: 2rem; }
+        .btn-start-hero .text-box { display: flex; flex-direction: column; align-items: flex-start; }
+        .btn-start-hero .title { font-family: var(--font-game); font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; }
+        .btn-start-hero .sub { font-size: 0.8rem; opacity: 0.9; }
+
+        /* Settings Modal */
+        #settings-modal {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 2000; display: none; padding: 30px; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+        }
+        .settings-content {
+            background: #060b26; width: 100%; border-radius: 20px; padding: 25px;
+            border: 1px solid #143d78; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; gap: 20px; box-sizing: border-box;
+        }
+        .settings-content h2 { margin: 0; color: #fff; text-align: center; font-family: var(--font-game); }
+        .slider-container { display: flex; flex-direction: column; gap: 10px; }
+        input[type=range] { width: 100%; accent-color: var(--accent); }
+        .btn-danger { background: rgba(255, 23, 68, 0.2); color: #ff1744; border: 1px solid rgba(255,23,68,0.4); border-radius: 12px; padding: 15px; font-weight: 800; cursor: pointer; font-family: var(--font-ui);}
+        .btn-done { background: var(--accent); color: #000; border: none; border-radius: 12px; padding: 15px; font-weight: 800; cursor: pointer; font-family: var(--font-ui);}
+
+        /* Game Layout */
+        #game-layout { display: none; flex-direction: row; justify-content: center; align-items: flex-start; gap: 10px; width: 100%; position: relative; }
+        
+        .game-panel {
+            background: rgba(10, 15, 35, 0.8); backdrop-filter: blur(10px);
+            border: 1px solid var(--panel-border); border-radius: 16px; padding: 12px;
+            display: flex; flex-direction: column; align-items: center; width: 85px; box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .game-panel h3 { margin: 0 0 5px 0; font-size: 0.65rem; color: #8892b0; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; text-align: center; }
+        
+        #mode-display {
+            font-size: 0.6rem; color: var(--accent); font-weight: 800; text-transform: uppercase;
+            text-align: center; margin-bottom: 8px; padding: 2px 4px; border-radius: 4px;
+            background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3); width: 100%; box-sizing: border-box;
+        }
+
+        .stat-value { font-family: var(--font-game); font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 12px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+        .accent-stat { color: var(--accent); text-shadow: 0 0 10px rgba(0, 229, 255, 0.4); }
+        
+        .main-canvas-wrapper {
+            background: #000; border-radius: 12px; padding: 4px;
+            border: 1px solid var(--panel-border); box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+        }
+        canvas { display: block; border-radius: 8px; }
+        .mini-canvas { width: 60px; height: 60px; background: rgba(0,0,0,0.6); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
+
+        /* Overlays (Pause/Game Over/Level Up) */
+        .game-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 500;
+            border-radius: 12px; text-align: center; padding: 20px; box-sizing: border-box;
+        }
+        .game-overlay h2 { font-size: 1.8rem; margin: 0 0 10px 0; letter-spacing: 1px; font-family: var(--font-game);}
+        .btn-overlay { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-weight: 800; padding: 12px; border-radius: 10px; margin-top: 10px; cursor: pointer; width: 100%; font-family: inherit; transition: 0.2s;}
+        .btn-overlay:hover { background: rgba(255,255,255,0.2); }
+        
+        .upgrade-btn { background: rgba(0,229,255,0.1); border: 1px solid var(--accent); color: #fff; padding: 12px; margin: 5px 0; border-radius: 10px; cursor: pointer; width: 100%; font-family: inherit; text-align: left;}
+
+        /* Premium Controls */
+        #controls-layout { display: none; width: 100%; margin-top: 10px; flex-direction: column; gap: 8px; padding: 0 10px; box-sizing: border-box; }
+        .btn-row { display: flex; gap: 8px; width: 100%; }
+        .ctrl-pad {
+            background: rgba(10, 15, 35, 0.8); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.9);
+            border-radius: 12px; padding: 15px 0; font-size: 1rem; font-weight: 800;
+            flex: 1; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4); user-select: none; font-family: inherit; cursor: pointer;
+        }
+        .ctrl-pad:active { background: rgba(255,255,255,0.15); transform: translateY(2px); }
+        .ctrl-large { flex: 2; }
+        .ctrl-accent { background: rgba(0, 229, 255, 0.1); border-color: rgba(0, 229, 255, 0.3); color: var(--accent); }
 
         @keyframes shake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
@@ -68,225 +279,176 @@
             100% { transform: translate(0, 0) rotate(0deg); }
         }
         .shake { animation: shake 0.15s cubic-bezier(.36,.07,.19,.97) both; }
-
-        .side-panel {
-            background: var(--panel-bg); padding: 10px; border-radius: 8px;
-            border: 1px solid #333; display: flex; flex-direction: column;
-            align-items: center; width: 85px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            position: relative; box-sizing: border-box;
-        }
-
-        .side-panel h3 { margin: 0 0 8px 0; font-size: 0.75rem; color: #888; letter-spacing: 1px; text-align: center; }
-        .stat-value { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 10px; text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
-        
-        #mode-display { font-size: 0.6rem; color: var(--accent); text-align: center; margin-bottom: 10px; word-wrap: break-word;}
-
-        canvas { background: #000; border: 2px solid #333; border-radius: 4px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.8); position: relative; z-index: 1; }
-        .mini-canvas { width: 60px; height: 60px; border: none; background: transparent; box-shadow: none; }
-
-        /* Absolute Layout Overlays scaling with Virtual Engine Container */
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 1000;
-            border-radius: 10px; border: 2px solid var(--accent);
-            box-shadow: 0 0 30px rgba(0, 229, 255, 0.2); backdrop-filter: blur(5px);
-            box-sizing: border-box;
-        }
-
-        #mode-menu {
-            display: flex; flex-direction: column; padding: 15px;
-            width: 100%; height: 100%;
-            background: rgba(15, 15, 19, 0.98); border: 2px solid var(--accent);
-            border-radius: 10px; z-index: 1000; position: absolute;
-            top: 0; left: 0; 
-            box-shadow: 0 0 40px rgba(0, 229, 255, 0.4); overflow: hidden;
-            box-sizing: border-box;
-        }
-        
-        #mode-menu h2 { text-align: center; color: var(--accent); margin: 5px 0 10px 0; font-size: 1.5rem; text-shadow: 0 0 10px var(--accent); }
-        
-        .mode-list {
-            flex: 1; overflow-y: auto; display: grid; gap: 8px; padding: 5px;
-            grid-template-columns: 1fr; touch-action: pan-y;
-        }
-
-        .mode-list::-webkit-scrollbar { width: 6px; }
-        .mode-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
-
-        .mode-card {
-            background: var(--panel-bg); border: 1px solid #444; border-radius: 8px;
-            padding: 12px 10px; cursor: pointer; transition: all 0.2s;
-            display: flex; flex-direction: column; gap: 4px; position: relative;
-            overflow: hidden; flex-shrink: 0; min-height: 75px; justify-content: center;
-        }
-
-        .mode-card:hover, .mode-card.selected {
-            border-color: var(--accent); background: #222230;
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); transform: scale(0.98);
-        }
-
-        .mode-title { font-size: 1.1rem; font-weight: bold; color: #fff; }
-        .mode-desc { font-size: 0.75rem; color: #aaa; font-family: 'Segoe UI', sans-serif;}
-        .mode-diff { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; align-self: flex-start; font-weight: bold;}
-        .diff-easy { background: #00e67633; color: #00e676; border: 1px solid #00e676; }
-        .diff-med { background: #ffd60033; color: #ffd600; border: 1px solid #ffd600; }
-        .diff-hard { background: #ff174433; color: #ff1744; border: 1px solid #ff1744; }
-
-        .action-overlay-btn {
-            background: var(--accent); color: #000; font-weight: bold; font-size: 1.1rem;
-            padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer;
-            font-family: inherit; box-shadow: 0 0 15px var(--accent); transition: transform 0.1s;
-            margin-top: 10px; width: 100%; flex-shrink: 0;
-        }
-        .action-overlay-btn:active { transform: scale(0.95); }
-
-        #upgrade-menu { display: none; text-align: center;}
-        .upgrade-btn { background: #2a2a35; color: #fff; border: 1px solid var(--accent); padding: 10px; margin: 5px; border-radius: 5px; cursor: pointer; width: 100%; font-family: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s;}
-        .upgrade-btn:hover { background: #3a3a45; box-shadow: 0 0 10px var(--accent); transform: scale(1.02); }
-        
-        #game-over h2 { color: #ff3366; text-shadow: 0 0 10px #ff3366; }
-        #game-over .action-overlay-btn { background: #ff3366; box-shadow: 0 0 15px #ff3366; margin: 5px; }
-
-        /* Controls */
-        #controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; width: 100%; box-sizing: border-box; }
-        .btn-row { display: flex; justify-content: space-between; grid-column: 1 / -1; gap: 10px; margin-bottom: 2px; }
-        button.ctrl-btn {
-            background: linear-gradient(145deg, #2a2a35, #1a1a24); border: 1px solid #444; color: white;
-            padding: 12px; border-radius: 10px; font-size: 1.2rem; font-weight: bold;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.5); user-select: none; font-family: inherit;
-        }
-        button.ctrl-btn:active { background: #2a2a35; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.5); border-color: var(--accent); }
-        #btn-left { grid-column: 1 / span 2; }
-        #btn-down { grid-column: 3 / span 1; }
-        #btn-right { grid-column: 4 / span 1; }
-        .action-btn { flex: 1; font-size: 1rem; }
-        
-        #rewind-btn-container { display: none; grid-column: 1 / -1; }
     </style>
 </head>
 <body>
 
+    <div class="bg-grid"></div>
+    <div class="floating-blocks">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+
     <div id="super-wrapper">
         <header>
-            <button id="btn-mute" class="util-btn">🔊</button>
-            BUILDER
-            <button id="btn-pause" class="util-btn" onclick="togglePause()">⏸</button>
+            <button id="btn-mute" class="icon-btn">🔊</button>
+            <button id="btn-settings" class="icon-btn">⚙️</button>
+            <button id="btn-pause" class="icon-btn" style="display: none; font-size: 1rem;" onclick="togglePause()">⏸</button>
         </header>
 
-        <div id="game-container">
-            <div id="mode-menu">
-                <h2>SELECT MODE</h2>
-                <div class="mode-list" id="mode-list-container"></div>
-                
-                <div id="multiplayer-ui" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px; border-top: 1px solid #444; padding-top: 10px;">
-                    <h3 style="margin: 0; color: #d500f9; text-align: center; font-size: 0.9rem; text-shadow: 0 0 10px rgba(213,0,249,0.5);">P2P MULTIPLAYER</h3>
-                    
-                    <div style="display: flex; gap: 5px;">
-                        <button class="action-overlay-btn" id="btn-host" style="background: #d500f9; box-shadow: 0 0 10px #d500f9; margin-top: 0; flex: 1; font-size: 0.9rem; padding: 10px;">HOST</button>
-                        <div style="display: flex; flex: 1; gap: 5px;">
-                            <input type="text" id="join-id" placeholder="Code" style="width: 50%; background: #2a2a35; color: #d500f9; border: 1px solid #d500f9; padding: 5px; border-radius: 5px; font-family: inherit; text-transform: uppercase; text-align: center;">
-                            <button class="action-overlay-btn" id="btn-join" style="margin-top: 0; width: 50%; padding: 5px; background: #d500f9; box-shadow: 0 0 10px #d500f9; font-size: 0.9rem;">JOIN</button>
-                        </div>
-                    </div>
+        <div class="premium-title" id="main-title">
+            <span class="t-red">T</span><span class="t-org">E</span><span class="t-grn">T</span><span class="t-blu">R</span><span class="t-pur">I</span><span class="t-pnk">S</span>
+        </div>
 
-                    <div id="lobby-info" style="display: none; background: #1a1a24; border: 1px solid #555; padding: 10px; border-radius: 5px; align-items: center; justify-content: space-between;">
-                        <div style="font-size: 0.75rem; color: #aaa;">Lobby Code: <br><span id="display-id" style="font-size: 1.2rem; font-weight: bold; color: #d500f9; letter-spacing: 2px;">-----</span></div>
-                        <button id="btn-copy" class="util-btn" style="border-color: #d500f9; color: #d500f9; box-shadow: none;">📋 COPY</button>
-                    </div>
-                    
-                    <div id="connection-status" style="color: #ffd600; font-size: 0.75rem; text-align: center; word-wrap: break-word; min-height: 15px;"></div>
+        <!-- Main Mode Menu (Glass Panel) -->
+        <div id="mode-menu" class="glass-panel">
+            <div class="divider"><span>SELECT MODE</span></div>
+            
+            <div class="mode-list" id="mode-list-container">
+                <!-- Modes generated dynamically -->
+            </div>
+            
+            <div class="divider purple"><span>MULTIPLAYER</span></div>
+            
+            <!-- Exact 3-Grid Multiplayer Layout -->
+            <div class="mp-grid">
+                <div class="mp-box mp-host" id="btn-host">
+                    <div class="mp-icon">👤</div>
+                    <div class="mp-title">HOST</div>
+                    <div class="mp-sub">Create Room</div>
                 </div>
-
-                <button class="action-overlay-btn" onclick="startGame()">START SINGLEPLAYER</button>
+                
+                <div class="mp-box mp-code">
+                    <div class="mp-icon" style="font-size:0.9rem;">🔒</div>
+                    <div class="mp-title">CODE</div>
+                    <input type="text" id="join-id" placeholder="Code">
+                </div>
+                
+                <div class="mp-box mp-join" id="btn-join">
+                    <div class="mp-icon">👥</div>
+                    <div class="mp-title">JOIN</div>
+                    <div class="mp-sub">Join Room</div>
+                </div>
             </div>
 
-            <div id="pause-screen" class="overlay" style="display: none;">
-                <h2>PAUSED</h2>
-                <button class="action-overlay-btn" onclick="resumeGame()">RESUME</button>
-                <button class="action-overlay-btn" style="background:#555; box-shadow:none; margin-top:10px;" onclick="showModeMenu()">QUIT TO MENU</button>
+            <div id="lobby-info" style="display: none; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 10px; flex-shrink: 0;">
+                <div style="font-size: 0.75rem; color: #8892b0;">Lobby Code</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                    <span id="display-id" style="font-size: 1.5rem; font-weight: 900; color: var(--accent-purple); letter-spacing: 3px;">-----</span>
+                    <button id="btn-copy" style="background: rgba(255,255,255,0.1); border:none; color:white; padding:8px 15px; border-radius:8px; cursor:pointer; font-weight:bold;">COPY</button>
+                </div>
             </div>
+            <div id="connection-status" style="color: var(--accent-green); font-size: 0.8rem; text-align: center; min-height: 15px; font-weight: 600; flex-shrink: 0; margin-bottom: 5px;"></div>
 
-            <div id="game-over" class="overlay" style="display: none;">
-                <h2>GAME OVER</h2>
-                <p>Final Score: <span id="final-score">0</span></p>
-                <button class="action-overlay-btn" onclick="resetGame()">PLAY AGAIN</button>
-                <button class="action-overlay-btn" style="background:#555; box-shadow:none;" onclick="showModeMenu()">CHANGE MODE</button>
+            <!-- Giant Hero Start Button -->
+            <div class="btn-start-hero" onclick="startGame()">
+                <div class="icon">▶</div>
+                <div class="text-box">
+                    <div class="title">START SINGLEPLAYER</div>
+                    <div class="sub">Play Solo</div>
+                </div>
             </div>
+        </div>
 
-            <div id="upgrade-menu" class="overlay">
-                <h2 style="color:#ffd600; margin-bottom: 5px; text-shadow: 0 0 10px #ffd600;">LEVEL UP!</h2>
-                <p style="margin-top: 0; color: #aaa; font-size: 0.8rem;">Select a run upgrade:</p>
-                <div id="upgrade-choices" style="display: flex; flex-direction: column; gap: 10px; width: 85%;">
-                    </div>
+        <!-- Settings Modal -->
+        <div id="settings-modal">
+            <div class="settings-content">
+                <h2>SETTINGS</h2>
+                <div class="slider-container">
+                    <label style="color:#aaa; font-size:0.9rem; font-weight:600;">SFX Volume</label>
+                    <input type="range" id="vol-slider" min="0" max="1" step="0.1" value="1">
+                </div>
+                <button class="btn-danger" onclick="resetProgress()">⚠️ RESET PROGRESS</button>
+                <button class="btn-done" onclick="closeSettings()">DONE</button>
             </div>
+        </div>
 
-            <div class="side-panel">
+        <!-- Active Game Layout -->
+        <div id="game-layout">
+            <!-- Left Panel -->
+            <div class="game-panel">
                 <div id="mode-display">CLASSIC</div>
                 <h3>HOLD</h3>
                 <canvas id="hold-canvas" class="mini-canvas" width="60" height="60"></canvas>
-                <h3 style="margin-top: 15px;">SCORE</h3>
+                <h3>SCORE</h3>
                 <div id="score" class="stat-value">0</div>
                 <h3>LEVEL</h3>
-                <div id="level" class="stat-value" style="color: var(--accent);">1</div>
+                <div id="level" class="stat-value accent-stat">1</div>
             </div>
 
-            <div>
+            <!-- Main Board -->
+            <div class="main-canvas-wrapper" style="position: relative;">
                 <canvas id="tetris-canvas" width="200" height="400"></canvas>
+                
+                <!-- In-Game Overlays -->
+                <div id="pause-screen" class="game-overlay" style="display: none;">
+                    <h2 style="color:var(--accent);">PAUSED</h2>
+                    <button class="btn-overlay" onclick="resumeGame()">RESUME</button>
+                    <button class="btn-overlay" onclick="showModeMenu()">MAIN MENU</button>
+                </div>
+
+                <!-- OVERHAULED VICTORY / GAMEOVER SCREEN -->
+                <div id="game-over" class="game-overlay" style="display: none;">
+                    <h2 id="go-title" style="color:#ff1744; text-shadow: 0 0 15px #ff1744;">GAME OVER</h2>
+                    <p id="go-desc" style="color:#aaa; margin:0 0 15px 0;">Final Score: <br><span style="font-size:1.5rem; color:#fff; font-family:var(--font-game);">0</span></p>
+                    <button id="go-btn-play" class="btn-overlay" style="background: rgba(255, 23, 68, 0.2); border-color:#ff1744;" onclick="resetGame()">PLAY AGAIN</button>
+                    <button class="btn-overlay" onclick="showModeMenu()">MAIN MENU</button>
+                </div>
+
+                <div id="upgrade-menu" class="game-overlay" style="display: none; justify-content: flex-start; padding-top: 30px;">
+                    <h2 style="color:#ffd600; font-size:1.5rem; margin:0;">LEVEL UP!</h2>
+                    <p style="color: #aaa; font-size: 0.8rem; margin: 5px 0 15px 0;">Select a run upgrade:</p>
+                    <div id="upgrade-choices" style="display: flex; flex-direction: column; width: 100%;"></div>
+                </div>
             </div>
 
-            <div class="side-panel" id="right-panel">
+            <!-- Right Panel -->
+            <div class="game-panel" id="right-panel">
                 <h3>NEXT</h3>
                 <canvas id="next-canvas" class="mini-canvas" width="60" height="60"></canvas>
                 
-                <div id="sp-stats" style="display: block; width: 100%; text-align: center;">
-                    <h3 style="margin-top: 15px;">HIGH</h3>
+                <div id="sp-stats" style="width: 100%; text-align: center;">
+                    <h3>HIGH</h3>
                     <div id="high-score" class="stat-value">0</div>
                 </div>
 
                 <div id="mp-stats" style="display: none; width: 100%; flex-direction: column; align-items: center;">
-                    <h3 style="margin-top: 15px; color: #d500f9; text-shadow: 0 0 5px rgba(213,0,249,0.5);">RIVAL</h3>
-                    <canvas id="opponent-canvas" width="60" height="120" style="background: #000; border: 1px solid #d500f9; border-radius: 4px; box-shadow: none;"></canvas>
-                    <div id="opp-score" style="font-size: 0.8rem; font-weight: bold; color: #d500f9; margin-top: 5px;">0</div>
+                    <h3 style="color: var(--accent-purple);">RIVAL</h3>
+                    <canvas id="opponent-canvas" width="60" height="120" style="background: rgba(0,0,0,0.8); border: 1px solid var(--accent-purple); border-radius: 8px;"></canvas>
+                    <div id="opp-score" style="font-size: 0.9rem; font-family: var(--font-game); font-weight: bold; color: var(--accent-purple); margin-top: 5px;">0</div>
                 </div>
 
-                <h3 style="margin-top: 10px;">LINES</h3>
+                <h3>LINES</h3>
                 <div id="lines" class="stat-value">0</div>
             </div>
         </div>
 
-        <div id="controls">
-            <div id="rewind-btn-container" style="margin-bottom: 5px;">
-                <button id="btn-rewind" class="ctrl-btn action-btn" style="width:100%; background:#d500f9; border-color:#d500f9;">⏪ REWIND (3)</button>
+        <!-- Touch Controls -->
+        <div id="controls-layout">
+            <div id="rewind-btn-container" style="display: none; margin-bottom: 2px;">
+                <button id="btn-rewind" class="ctrl-pad" style="width:100%; background:rgba(213,0,249,0.1); border-color:rgba(213,0,249,0.4); color:#d500f9;">⏪ REWIND (3)</button>
             </div>
-
             <div class="btn-row">
-                <button id="btn-hold" class="ctrl-btn action-btn">HOLD</button>
-                <button id="btn-rotate" class="ctrl-btn action-btn">↻ ROTATE</button>
-                <button id="btn-drop" class="ctrl-btn action-btn">⤓ DROP</button>
+                <button id="btn-hold" class="ctrl-pad">HOLD</button>
+                <button id="btn-rotate" class="ctrl-pad ctrl-large ctrl-accent">↻ ROTATE</button>
+                <button id="btn-drop" class="ctrl-pad">⤓ DROP</button>
             </div>
-            <button id="btn-left" class="ctrl-btn">← LEFT</button>
-            <button id="btn-down" class="ctrl-btn">↓</button>
-            <button id="btn-right" class="ctrl-btn">RIGHT →</button>
+            <div class="btn-row">
+                <button id="btn-left" class="ctrl-pad ctrl-large">← LEFT</button>
+                <button id="btn-down" class="ctrl-pad">↓</button>
+                <button id="btn-right" class="ctrl-pad ctrl-large">RIGHT →</button>
+            </div>
         </div>
     </div>
 
 <script>
-    // --- Register Service Worker for PWA ---
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').catch(err => {
-                console.log('SW Registration failed: ', err);
-            });
-        });
-    }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(() => {}); }); }
 
-    // --- Dynamic Window Scaling Engine ---
     function performLayoutScaling() {
         const wrapper = document.getElementById('super-wrapper');
-        const internalWidth = 400; const internalHeight = 620;
+        const internalWidth = 400; const internalHeight = 680;
         const viewWidth = window.innerWidth - 10; const viewHeight = window.innerHeight - 10;
         const scaleFactorX = viewWidth / internalWidth; const scaleFactorY = viewHeight / internalHeight;
         let absoluteScale = Math.min(scaleFactorX, scaleFactorY);
@@ -297,59 +459,58 @@
     window.addEventListener('resize', performLayoutScaling);
     window.addEventListener('DOMContentLoaded', performLayoutScaling);
 
-    // --- Audio Engine ---
-    let audioCtx; let isMuted = false;
+    let audioCtx; let isMuted = false; let globalVolume = 1.0;
+    
+    document.getElementById('btn-settings').addEventListener('click', () => { document.getElementById('settings-modal').style.display = 'flex'; });
+    function closeSettings() { document.getElementById('settings-modal').style.display = 'none'; }
+    function resetProgress() { localStorage.clear(); loadSaveData(); alert("Progress Reset."); }
+    
+    document.getElementById('vol-slider').addEventListener('input', (e) => { globalVolume = parseFloat(e.target.value); });
+    document.getElementById('btn-mute').addEventListener('click', () => { isMuted = !isMuted; document.getElementById('btn-mute').innerText = isMuted ? '🔇' : '🔊'; });
+
     function initAudio() {
         if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
         if (audioCtx.state === 'suspended') audioCtx.resume();
     }
-    document.getElementById('btn-mute').addEventListener('click', () => {
-        isMuted = !isMuted; document.getElementById('btn-mute').innerText = isMuted ? '🔇' : '🔊';
-    });
+    
     function playSound(type) {
-        if (isMuted || !audioCtx) return;
+        if (isMuted || !audioCtx || globalVolume === 0) return;
         const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
         osc.connect(gainNode); gainNode.connect(audioCtx.destination);
         const now = audioCtx.currentTime;
         if (type === 'move') {
             osc.type = 'triangle'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
-            gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            gainNode.gain.setValueAtTime(0.05 * globalVolume, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
             osc.start(now); osc.stop(now + 0.05);
         } else if (type === 'rotate') {
             osc.type = 'square'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(600, now + 0.08);
-            gainNode.gain.setValueAtTime(0.03, now); gainNode.gain.linearRampToValueAtTime(0.01, now + 0.08);
+            gainNode.gain.setValueAtTime(0.03 * globalVolume, now); gainNode.gain.linearRampToValueAtTime(0.01, now + 0.08);
             osc.start(now); osc.stop(now + 0.08);
         } else if (type === 'drop') {
             osc.type = 'sine'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
-            gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            gainNode.gain.setValueAtTime(0.2 * globalVolume, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
             osc.start(now); osc.stop(now + 0.15);
         } else if (type === 'clear') {
             osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.linearRampToValueAtTime(1200, now + 0.1);
-            gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
+            gainNode.gain.setValueAtTime(0.1 * globalVolume, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
             osc.start(now); osc.stop(now + 0.3);
         }
     }
 
-    // --- Core Architecture & Variables ---
     const canvas = document.getElementById('tetris-canvas'); const ctx = canvas.getContext('2d');
     const nextCanvas = document.getElementById('next-canvas'); const nextCtx = nextCanvas.getContext('2d');
     const holdCanvas = document.getElementById('hold-canvas'); const holdCtx = holdCanvas.getContext('2d');
 
     const ROWS = 20, COLS = 10, BLOCK_SIZE = 20;
-    const COLORS = [ null, '#00e5ff', '#2962ff', '#ff9100', '#ffd600', '#00e676', '#d500f9', '#ff1744', '#ffffff' ];
+    const COLORS = [ null, '#00e5ff', '#2962ff', '#ff9800', '#ffd600', '#4caf50', '#9c27b0', '#ff3333', '#ffffff' ];
     const PIECES = [ [], [[0,0,0,0], [1,1,1,1], [0,0,0,0], [0,0,0,0]], [[2,0,0], [2,2,2], [0,0,0]], [[0,0,3], [3,3,3], [0,0,0]], [[4,4], [4,4]], [[0,5,5], [5,5,0], [0,0,0]], [[0,6,0], [6,6,6], [0,0,0]], [[7,7,0], [0,7,7], [0,0,0]], [[8]] ];
 
-    let board = [];
-    let score = 0, lines = 0, level = 1, highScore = 0;
+    let board = []; let score = 0, lines = 0, level = 1, highScore = 0;
     let dropCounter = 0, dropInterval = 1000, lastTime = 0, gameState = 'MENU'; 
     let animationId, flashOpacity = 0, particles = [];
-    
-    let lockTimer = 0, lockResets = 0; 
-    let LOCK_DELAY_MS = 500, MAX_LOCK_RESETS = 15; // Changed to let for upgrades
-
+    let lockTimer = 0, lockResets = 0; let LOCK_DELAY_MS = 500, MAX_LOCK_RESETS = 15;
     const player = { pos: {x: 0, y: 0}, matrix: null, nextMatrix: null, holdMatrix: null, canHold: true };
 
-    // --- Modular Game Mode System ---
     class GameMode {
         constructor() { this.scoreMultiplier = 1; this.preventSweep = false; }
         onStart() {} onUpdate(deltaTime) {} onDraw(ctx) {}
@@ -359,88 +520,53 @@
     let activeMode = null; let selectedModeId = 'classic';
 
     const MODES_DATA = [
-        { id: 'classic', name: 'Classic Mode', desc: 'Clear lines and survive.', diff: 'EASY', diffClass: 'diff-easy' },
-        { id: 'rising', name: 'Rising Core', desc: 'A dangerous core expands in the center.', diff: 'HARD', diffClass: 'diff-hard' },
-        { id: 'meltdown', name: 'Meltdown', desc: 'Blocks vanish over time. Hurry!', diff: 'HARD', diffClass: 'diff-hard' },
-        { id: 'earthquake', name: 'Earthquake', desc: 'Board shakes and shifts randomly.', diff: 'MED', diffClass: 'diff-med' },
-        { id: 'blueprint', name: 'Blueprint Builder', desc: 'Match the ghost blueprint pattern.', diff: 'MED', diffClass: 'diff-med' },
-        { id: 'dungeon', name: 'Dungeon Descent', desc: 'Gain XP to level up in the dungeon.', diff: 'EASY', diffClass: 'diff-easy' },
-        { id: 'boss', name: 'Boss Battle', desc: 'Clear lines to damage the Boss HP.', diff: 'MED', diffClass: 'diff-med' },
-        { id: 'gravity', name: 'Gravity Shift', desc: 'Locked blocks shift directions.', diff: 'HARD', diffClass: 'diff-hard' },
-        { id: 'rewind', name: 'Rewind Mode', desc: 'Mistakes? Use your 3 rewinds.', diff: 'EASY', diffClass: 'diff-easy' },
-        { id: 'phantom', name: 'Phantom Matrix', desc: 'Locked blocks vanish! Radar pulses every 10s.', diff: 'HARD', diffClass: 'diff-hard' },
-        { id: 'roguelike', name: 'Roguelike Run', desc: 'Pick powerful upgrades after levels.', diff: 'HARD', diffClass: 'diff-hard' }
+        { id: 'classic', name: 'CLASSIC MODE', desc: 'Clear lines and survive.', diff: 'EASY', diffClass: 'badge-easy', cardClass: 'card-classic' },
+        { id: 'rising', name: 'RISING CORE', desc: 'The speed never stops.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-rising' },
+        { id: 'meltdown', name: 'MELTDOWN', desc: 'Blocks vanish quickly!', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-classic' },
+        { id: 'earthquake', name: 'EARTHQUAKE', desc: 'Board shifts randomly.', diff: 'MED', diffClass: 'badge-med', cardClass: 'card-classic' },
+        { id: 'blueprint', name: 'BLUEPRINT', desc: 'Match ghost patterns.', diff: 'MED', diffClass: 'badge-med', cardClass: 'card-classic' },
+        { id: 'dungeon', name: 'DUNGEON', desc: 'Gain XP to level up.', diff: 'EASY', diffClass: 'badge-easy', cardClass: 'card-rising' },
+        { id: 'boss', name: 'BOSS BATTLE', desc: 'Damage the Boss HP.', diff: 'MED', diffClass: 'badge-hard', cardClass: 'card-classic' },
+        { id: 'gravity', name: 'GRAVITY SHIFT', desc: 'Locked blocks slide.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-classic' },
+        { id: 'rewind', name: 'REWIND MODE', desc: 'Gain 3 Undo Charges.', diff: 'EASY', diffClass: 'badge-easy', cardClass: 'card-rising' },
+        { id: 'phantom', name: 'PHANTOM MATRIX', desc: 'Blocks turn invisible.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-rising' },
+        { id: 'roguelike', name: 'ROGUELIKE', desc: 'Pick powerful upgrades.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-classic' }
     ];
 
     class ClassicMode extends GameMode {}
-
     class RisingCoreMode extends GameMode {
         constructor() { super(); this.timer = 0; this.coreHeight = 0; }
-        onUpdate(dt) {
-            this.timer += dt;
-            if (this.timer > 30000) { 
-                this.timer = 0; this.coreHeight++;
-                let y = ROWS - this.coreHeight;
-                if (y >= 0) { board[y][4] = 7; board[y][5] = 7; triggerShake(); }
-                if (y <= 2) triggerGameOver();
-            }
-        }
-        onDraw(ctx) { ctx.fillStyle='red'; ctx.fillText(`Core Expansion: ${Math.floor(30 - this.timer/1000)}s`, 10, 20); }
+        onUpdate(dt) { this.timer += dt; if (this.timer > 30000) { this.timer = 0; this.coreHeight++; let y = ROWS - this.coreHeight; if (y >= 0) { board[y][4] = 7; board[y][5] = 7; triggerShake(); } if (y <= 2) triggerGameOver(false); } }
+        onDraw(ctx) { ctx.fillStyle='red'; ctx.font='10px Poppins'; ctx.fillText(`Core Expands: ${Math.floor(30 - this.timer/1000)}s`, 5, 15); }
     }
-
     class MeltdownMode extends GameMode {
         constructor() { super(); this.timers = createMatrix(COLS, ROWS); }
         onPieceLock(p) { p.matrix.forEach((row, y) => row.forEach((val, x) => { if (val !== 0) this.timers[p.pos.y + y][p.pos.x + x] = 15; })); }
-        onUpdate(dt) {
-            for(let y=0; y<ROWS; y++) for(let x=0; x<COLS; x++) {
-                if(this.timers[y][x] > 0) {
-                    this.timers[y][x] -= dt/1000;
-                    if(this.timers[y][x] <= 0) { board[y][x] = 0; this.timers[y][x] = 0; }
-                }
-            }
-        }
+        onUpdate(dt) { for(let y=0; y<ROWS; y++) for(let x=0; x<COLS; x++) { if(this.timers[y][x] > 0) { this.timers[y][x] -= dt/1000; if(this.timers[y][x] <= 0) { board[y][x] = 0; this.timers[y][x] = 0; } } } }
         onLineClear(c) { for(let y=0; y<ROWS; y++) for(let x=0; x<COLS; x++) if(this.timers[y][x] > 0) this.timers[y][x] = 15; }
-        onDraw(ctx) { ctx.fillStyle='#ff9100'; ctx.fillText('Blocks Decay Quickly!', 10, 20); }
+        onDraw(ctx) { ctx.fillStyle='#ff9800'; ctx.font='10px Poppins'; ctx.fillText('Decay Active', 5, 15); }
     }
-
     class EarthquakeMode extends GameMode {
         constructor() { super(); this.timer = 0; }
-        onUpdate(dt) {
-            this.timer += dt;
-            if (this.timer > 45000) {
-                this.timer = 0; triggerShake();
-                const dir = Math.random() > 0.5 ? 1 : -1;
-                for(let y=ROWS-1; y>=0; y--) {
-                    if (dir===1) { board[y].unshift(0); board[y].pop(); } else { board[y].push(0); board[y].shift(); }
-                }
-            }
-        }
-        onDraw(ctx) { ctx.fillStyle='#fff'; ctx.fillText(`Quake in: ${Math.floor(45 - this.timer/1000)}s`, 10, 20); }
+        onUpdate(dt) { this.timer += dt; if (this.timer > 45000) { this.timer = 0; triggerShake(); const dir = Math.random() > 0.5 ? 1 : -1; for(let y=ROWS-1; y>=0; y--) { if (dir===1) { board[y].unshift(0); board[y].pop(); } else { board[y].push(0); board[y].shift(); } } } }
+        onDraw(ctx) { ctx.fillStyle='#fff'; ctx.font='10px Poppins'; ctx.fillText(`Quake in: ${Math.floor(45 - this.timer/1000)}s`, 5, 15); }
     }
-
     class BlueprintMode extends GameMode {
         constructor() { super(); this.blueprint = createMatrix(COLS, ROWS); this.blueprint[19][2] = 2; this.blueprint[19][3] = 2; this.blueprint[18][2] = 2; this.blueprint[18][3] = 2; }
-        onPieceLock() {
-            let match = true;
-            for(let y=15; y<ROWS; y++) for(let x=0; x<COLS; x++) { if(this.blueprint[y][x] !== 0 && board[y][x] === 0) match = false; }
-            if(match && this.blueprint[19][2] !== 0) { score += 1000; flashOpacity = 0.8; playSound('clear'); this.blueprint = createMatrix(COLS, ROWS); }
-        }
+        onPieceLock() { let match = true; for(let y=15; y<ROWS; y++) for(let x=0; x<COLS; x++) { if(this.blueprint[y][x] !== 0 && board[y][x] === 0) match = false; } if(match && this.blueprint[19][2] !== 0) { score += 1000; flashOpacity = 0.8; playSound('clear'); this.blueprint = createMatrix(COLS, ROWS); } }
         onDraw(ctx) { drawMatrix(this.blueprint, {x:0,y:0}, ctx, true); }
     }
-
     class DungeonMode extends GameMode {
         constructor() { super(); this.xp = 0; this.maxXP = 10; }
         onLineClear(c) { this.xp += c * 2; if (this.xp >= this.maxXP) { this.xp = 0; this.maxXP += 5; score += 500; triggerShake(); playSound('clear'); } }
-        onDraw(ctx) { ctx.fillStyle='#d500f9'; ctx.fillText(`Dungeon XP: ${this.xp}/${this.maxXP}`, 10, 20); }
+        onDraw(ctx) { ctx.fillStyle='#9c27b0'; ctx.font='10px Poppins'; ctx.fillText(`XP: ${this.xp}/${this.maxXP}`, 5, 15); }
     }
-
     class BossBattleMode extends GameMode {
         constructor() { super(); this.bossHP = 100; this.timer = 120; this.dtAcc = 0;}
         onLineClear(c) { const dmg = [0, 5, 15, 30, 50]; this.bossHP -= dmg[c]; if(this.bossHP <= 0) { score += 5000; this.bossHP = 100 + (level*20); } triggerShake(); }
-        onUpdate(dt) { this.dtAcc += dt; if(this.dtAcc > 1000) { this.timer--; this.dtAcc = 0; } if(this.timer <= 0) triggerGameOver(); }
-        onDraw(ctx) { ctx.fillStyle = '#ff1744'; ctx.fillRect(10, 10, (this.bossHP/100)*180, 10); ctx.fillStyle = '#fff'; ctx.fillText(`Boss Time: ${this.timer}s`, 10, 35); }
+        onUpdate(dt) { this.dtAcc += dt; if(this.dtAcc > 1000) { this.timer--; this.dtAcc = 0; } if(this.timer <= 0) triggerGameOver(false); }
+        onDraw(ctx) { ctx.fillStyle = '#ff3333'; ctx.fillRect(10, 10, (this.bossHP/100)*180, 10); ctx.fillStyle = '#fff'; ctx.fillText(`Boss Time: ${this.timer}s`, 10, 35); }
     }
-
     class GravityShiftMode extends GameMode {
         constructor() { super(); this.timer = 0; this.dirs = ['DOWN','LEFT','RIGHT']; this.idx = 0; }
         onUpdate(dt) {
@@ -453,7 +579,6 @@
         }
         onDraw(ctx) { ctx.fillStyle='#00e5ff'; ctx.fillText(`GRAVITY: ${this.dirs[this.idx]}`, 10, 20); }
     }
-
     class RewindMode extends GameMode {
         constructor() { super(); this.history = []; this.rewinds = 3; }
         onStart() { this.history = []; this.rewinds = 3; document.getElementById('rewind-btn-container').style.display = 'block'; document.getElementById('btn-rewind').innerText = `⏪ REWIND (3)`; }
@@ -467,7 +592,6 @@
         }
         onGameOver() { document.getElementById('rewind-btn-container').style.display = 'none'; }
     }
-
     class PhantomMode extends GameMode {
         constructor() { super(); this.timer = 0; this.radar = 1.0; }
         onUpdate(dt) { this.timer += dt; if (this.timer > 10000) { this.timer = 0; this.radar = 1.0; triggerShake(); } if (this.radar > 0) this.radar -= dt / 2000; }
@@ -478,105 +602,81 @@
             ctx.fillStyle = '#00e5ff'; ctx.fillText(`SCAN IN: ${Math.max(0, Math.ceil(10 - this.timer/1000))}s`, 10, 20);
         }
     }
-
-    // --- Upgraded Roguelike Mode Class ---
     class RoguelikeMode extends GameMode {
-        constructor() { 
-            super(); 
-            this.nextUpgradeLine = 5; 
-            this.iPieceBias = false;
-            this.history = [];
-            this.rewinds = 0;
-        }
-        onStart() {
-            this.nextUpgradeLine = 5;
-            this.iPieceBias = false;
-            this.history = [];
-            this.rewinds = 0;
-        }
-        onPieceLock() {
-            if(this.history.length > 5) this.history.shift();
-            this.history.push({ b: board.map(r => [...r]), s: score, p: JSON.parse(JSON.stringify(player)) });
-        }
+        constructor() { super(); this.nextUpgradeLine = 5; this.iPieceBias = false; this.history = []; this.rewinds = 0; }
+        onStart() { this.nextUpgradeLine = 5; this.iPieceBias = false; this.history = []; this.rewinds = 0; }
+        onPieceLock() { if(this.history.length > 5) this.history.shift(); this.history.push({ b: board.map(r => [...r]), s: score, p: JSON.parse(JSON.stringify(player)) }); }
         doRewind() {
             if(this.rewinds > 0 && this.history.length > 0) {
-                this.rewinds--; 
-                let state = this.history.pop();
-                board = state.b; score = state.s; 
-                player.pos = state.p.pos; player.matrix = state.p.matrix;
-                
-                const btn = document.getElementById('btn-rewind');
-                btn.innerText = `⏪ REWIND (${this.rewinds})`;
-                if (this.rewinds <= 0) document.getElementById('rewind-btn-container').style.display = 'none';
-                
-                updateScore(); draw();
+                this.rewinds--; let state = this.history.pop();
+                board = state.b; score = state.s; player.pos = state.p.pos; player.matrix = state.p.matrix;
+                const btn = document.getElementById('btn-rewind'); btn.innerText = `⏪ REWIND (${this.rewinds})`;
+                if (this.rewinds <= 0) document.getElementById('rewind-btn-container').style.display = 'none'; updateScore(); draw();
             }
         }
-        onLineClear() {
-            if(lines >= this.nextUpgradeLine) {
-                this.nextUpgradeLine += 5; 
-                showUpgradeMenu();
-            }
-        }
+        onLineClear() { if(lines >= this.nextUpgradeLine) { this.nextUpgradeLine += 5; showUpgradeMenu(); } }
     }
 
-    // --- ROGUELIKE UPGRADE ENGINE ---
     const UPGRADES_POOL = [
-        { id: 'score', title: '🧠 Hyper Focus', desc: '+1.0x Score Multiplier', action: () => activeMode.scoreMultiplier += 1 },
-        { id: 'slow', title: '⏳ Chrono Shift', desc: 'Slower Gravity (-20% speed)', action: () => dropInterval += 200 },
-        { id: 'heal3', title: '🛠️ Minor Repair', desc: 'Clear Bottom 3 Rows', action: () => { for(let i=0; i<3; i++) { board.pop(); board.unshift(new Array(COLS).fill(0)); } } },
-        { id: 'heal5', title: '💥 Nuke Strike', desc: 'Clear Bottom 5 Rows', action: () => { for(let i=0; i<5; i++) { board.pop(); board.unshift(new Array(COLS).fill(0)); triggerShake(); } } },
-        { id: 'lock', title: '🛼 Greased Blocks', desc: '+250ms Slide Lock Time', action: () => LOCK_DELAY_MS += 250 },
-        { id: 'rewind', title: '⏪ Time Pocket', desc: 'Gain +2 Rewind Charges', action: () => { 
-            activeMode.rewinds = (activeMode.rewinds || 0) + 2; 
-            document.getElementById('rewind-btn-container').style.display = 'block'; 
-            document.getElementById('btn-rewind').innerText = `⏪ REWIND (${activeMode.rewinds})`; 
-        }},
-        { id: 'ipiece', title: '📏 The Long Boy', desc: 'Much higher \'I\' Piece chance', action: () => activeMode.iPieceBias = true },
-        { id: 'cash', title: '💎 Instant Riches', desc: '+5,000 Score instantly', action: () => { score += 5000; updateScore(); triggerShake(); } }
+        { title: '🧠 Hyper Focus', desc: '+1.0x Score Multiplier', action: () => activeMode.scoreMultiplier += 1 },
+        { title: '⏳ Chrono Shift', desc: 'Slower Gravity (-20% speed)', action: () => dropInterval += 200 },
+        { title: '🛠️ Minor Repair', desc: 'Clear Bottom 3 Rows', action: () => { for(let i=0; i<3; i++) { board.pop(); board.unshift(new Array(COLS).fill(0)); } } },
+        { title: '💥 Nuke Strike', desc: 'Clear Bottom 5 Rows', action: () => { for(let i=0; i<5; i++) { board.pop(); board.unshift(new Array(COLS).fill(0)); triggerShake(); } } },
+        { title: '🛼 Greased Blocks', desc: '+250ms Slide Lock Time', action: () => LOCK_DELAY_MS += 250 },
+        { title: '⏪ Time Pocket', desc: 'Gain +2 Rewind Charges', action: () => { activeMode.rewinds = (activeMode.rewinds || 0) + 2; document.getElementById('rewind-btn-container').style.display = 'block'; document.getElementById('btn-rewind').innerText = `⏪ REWIND (${activeMode.rewinds})`; }},
+        { title: '📏 The Long Boy', desc: 'Much higher \'I\' Piece chance', action: () => activeMode.iPieceBias = true },
+        { title: '💎 Instant Riches', desc: '+5,000 Score instantly', action: () => { score += 5000; updateScore(); triggerShake(); } }
     ];
 
     function showUpgradeMenu() {
         gameState = 'UPGRADE';
-        const container = document.getElementById('upgrade-choices');
-        container.innerHTML = '';
-
-        // Shuffle pool and pick first 3
-        const shuffled = [...UPGRADES_POOL].sort(() => 0.5 - Math.random());
-        const choices = shuffled.slice(0, 3);
-
+        const container = document.getElementById('upgrade-choices'); container.innerHTML = '';
+        const choices = [...UPGRADES_POOL].sort(() => 0.5 - Math.random()).slice(0, 3);
         choices.forEach(upg => {
-            const btn = document.createElement('button');
-            btn.className = 'upgrade-btn';
-            btn.innerHTML = `<span style="color:var(--accent); font-weight:bold; font-size:1.1rem;">${upg.title}</span><br><span style="font-size:0.75rem; color:#aaa;">${upg.desc}</span>`;
-            btn.onclick = () => {
-                upg.action();
-                document.getElementById('upgrade-menu').style.display = 'none';
-                gameState = 'PLAYING';
-                lastTime = performance.now(); 
-            };
+            const btn = document.createElement('button'); btn.className = 'upgrade-btn';
+            btn.innerHTML = `<span style="font-weight:800; font-size:1.1rem; margin-bottom:3px;">${upg.title}</span><br><span style="font-size:0.75rem; color:#aaa;">${upg.desc}</span>`;
+            btn.onclick = () => { upg.action(); document.getElementById('upgrade-menu').style.display = 'none'; gameState = 'PLAYING'; lastTime = performance.now(); };
             container.appendChild(btn);
         });
-
         document.getElementById('upgrade-menu').style.display = 'flex';
     }
 
-
-    // --- UI Integration ---
     function buildMenu() {
         const c = document.getElementById('mode-list-container'); c.innerHTML = '';
         MODES_DATA.forEach(m => {
-            const div = document.createElement('div'); div.className = `mode-card ${selectedModeId === m.id ? 'selected' : ''}`; div.onclick = () => { selectedModeId = m.id; buildMenu(); };
-            div.innerHTML = `<div class="mode-title">${m.name}</div><div class="mode-diff ${m.diffClass}">${m.diff}</div><div class="mode-desc">${m.desc}</div>`;
+            const div = document.createElement('div'); 
+            div.className = `mode-card ${m.cardClass} ${selectedModeId === m.id ? 'selected' : ''}`; 
+            div.onclick = () => { selectedModeId = m.id; buildMenu(); };
+            div.innerHTML = `
+                <div class="mode-card-left">
+                    <div class="mode-icon-box"></div>
+                    <div class="mode-details">
+                        <div class="mode-title">${m.name}</div>
+                        <div class="badge ${m.diffClass}">${m.diff}</div>
+                        <div class="mode-desc">${m.desc}</div>
+                    </div>
+                </div>
+                <div class="mode-chevron">❯</div>
+            `;
             c.appendChild(div);
         });
     }
 
-    function showModeMenu() { gameState = 'MENU'; document.getElementById('pause-screen').style.display = 'none'; document.getElementById('game-over').style.display = 'none'; document.getElementById('mode-menu').style.display = 'flex'; buildMenu(); }
+    function showModeMenu() { 
+        gameState = 'MENU'; 
+        document.getElementById('pause-screen').style.display = 'none'; 
+        document.getElementById('game-over').style.display = 'none'; 
+        document.getElementById('game-layout').style.display = 'none';
+        document.getElementById('controls-layout').style.display = 'none';
+        document.getElementById('btn-pause').style.display = 'none';
+        document.getElementById('btn-settings').style.display = 'flex';
+        document.getElementById('mode-menu').style.display = 'flex'; // Fix to show correctly
+        document.getElementById('main-title').style.display = 'flex';
+        buildMenu(); 
+    }
 
     function loadSaveData() { highScore = localStorage.getItem(`tetrisHigh_${selectedModeId}`) || 0; document.getElementById('high-score').innerText = highScore; }
 
-    // --- Graphics & Helpers ---
     function createMatrix(w, h) { const m = []; while (h--) m.push(new Array(w).fill(0)); return m; }
 
     class Particle {
@@ -584,70 +684,49 @@
         update() { this.x += this.vx; this.y += this.vy; this.vy += 0.4; this.life -= 0.03; }
         draw(ctx) { ctx.globalAlpha = Math.max(0, this.life); ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, 3, 3); ctx.globalAlpha = 1.0; }
     }
-
     function spawnDustParticle(x, y) { for(let i=0; i<5; i++) particles.push(new Particle(x*BLOCK_SIZE+Math.random()*BLOCK_SIZE, y*BLOCK_SIZE+BLOCK_SIZE, '#ffffff')); }
-
-    function triggerShake() { const c = document.getElementById('game-container'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
+    function triggerShake() { const c = document.getElementById('super-wrapper'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); }
 
     function drawBlock(context, x, y, colorId, isGhost = false) {
         if (colorId === 0) return; const color = COLORS[colorId];
         if (colorId === 8 && !isGhost) context.globalAlpha = 0.4 + 0.6 * Math.abs(Math.sin(Date.now() / 200));
         if (isGhost) {
-            context.fillStyle = color; context.globalAlpha = 0.2; context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            context.fillStyle = color; context.globalAlpha = 0.1; context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
             context.strokeStyle = color; context.globalAlpha = 0.5; context.strokeRect(x * BLOCK_SIZE + 1, y * BLOCK_SIZE + 1, BLOCK_SIZE - 2, BLOCK_SIZE - 2); context.globalAlpha = 1.0; return;
         }
         context.fillStyle = color; context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-        context.fillStyle = 'rgba(255,255,255,0.3)'; context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, 2); context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, 2, BLOCK_SIZE); 
-        context.fillStyle = 'rgba(0,0,0,0.4)'; context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE + BLOCK_SIZE - 2, BLOCK_SIZE, 2); context.fillRect(x * BLOCK_SIZE + BLOCK_SIZE - 2, y * BLOCK_SIZE, 2, BLOCK_SIZE); 
-        context.strokeStyle = '#000'; context.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE); context.globalAlpha = 1.0; 
+        context.fillStyle = 'rgba(255,255,255,0.2)'; context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, 3); context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, 3, BLOCK_SIZE); 
+        context.fillStyle = 'rgba(0,0,0,0.5)'; context.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE + BLOCK_SIZE - 3, BLOCK_SIZE, 3); context.fillRect(x * BLOCK_SIZE + BLOCK_SIZE - 3, y * BLOCK_SIZE, 3, BLOCK_SIZE); 
+        context.strokeStyle = 'rgba(0,0,0,0.8)'; context.lineWidth = 1; context.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE); context.globalAlpha = 1.0; 
     }
 
     function drawMatrix(matrix, offset, context, isGhost = false) { matrix.forEach((row, y) => { row.forEach((value, x) => { if (value !== 0) drawBlock(context, x + offset.x, y + offset.y, value, isGhost); }); }); }
 
     function drawGrid() {
-        ctx.strokeStyle = '#1a1a24'; ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1;
         for (let i = 0; i < COLS; i++) { ctx.beginPath(); ctx.moveTo(i * BLOCK_SIZE, 0); ctx.lineTo(i * BLOCK_SIZE, canvas.height); ctx.stroke(); }
         for (let j = 0; j < ROWS; j++) { ctx.beginPath(); ctx.moveTo(0, j * BLOCK_SIZE); ctx.lineTo(canvas.width, j * BLOCK_SIZE); ctx.stroke(); }
     }
 
-        function drawMiniCanvas(context, canvasObj, matrix) {
-        // 1. Reset any previous scales
+    function drawMiniCanvas(context, canvasObj, matrix) {
         context.setTransform(1, 0, 0, 1, 0, 0); 
-        
-        // 2. Draw the black background
-        context.fillStyle = '#000'; 
-        context.fillRect(0, 0, canvasObj.width, canvasObj.height); 
-        
+        context.clearRect(0, 0, canvasObj.width, canvasObj.height); 
         if (!matrix) return;
-
-        // 3. Scale the context down to 60% so pieces fit perfectly with a nice margin
-        const scale = 0.6; 
-        context.scale(scale, scale);
-
-        // 4. Calculate perfect center dynamically based on the matrix size
-        // (Canvas virtual width is 100 at 0.6 scale. 100 / 20 = 5 blocks across)
+        const scale = 0.6; context.scale(scale, scale);
         const blocksAcross = (canvasObj.width / scale) / BLOCK_SIZE; 
-        
-        const offset = { 
-            x: (blocksAcross - matrix[0].length) / 2, 
-            y: (blocksAcross - matrix.length) / 2 
-        };
-
+        const offset = { x: (blocksAcross - matrix[0].length) / 2, y: (blocksAcross - matrix.length) / 2 };
         drawMatrix(matrix, offset, context);
-
-        // 5. Restore context so we don't mess up future clears
         context.setTransform(1, 0, 0, 1, 0, 0);
     }
 
     function draw() {
-        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, canvas.width, canvas.height); drawGrid(); drawMatrix(board, {x: 0, y: 0}, ctx);
+        ctx.clearRect(0, 0, canvas.width, canvas.height); drawGrid(); drawMatrix(board, {x: 0, y: 0}, ctx);
         if (activeMode) activeMode.onDraw(ctx);
         if (gameState === 'PLAYING' || gameState === 'UPGRADE') { const ghost = getGhostPos(); drawMatrix(ghost.matrix, ghost.pos, ctx, true); drawMatrix(player.matrix, player.pos, ctx); }
         particles.forEach((p, index) => { p.update(); p.draw(ctx); if (p.life <= 0) particles.splice(index, 1); });
         if (flashOpacity > 0) { ctx.fillStyle = `rgba(255, 255, 255, ${flashOpacity})`; ctx.fillRect(0, 0, canvas.width, canvas.height); flashOpacity -= 0.05; }
     }
 
-    // --- Core Mechanics ---
     function merge(board, player) { player.matrix.forEach((row, y) => { row.forEach((value, x) => { if (value !== 0) board[y + player.pos.y][x + player.pos.x] = value; }); }); }
 
     function collide(board, player) {
@@ -659,11 +738,36 @@
         for (let y = 0; y < m.length; ++y) for (let x = 0; x < m[y].length; ++x) if (m[y][x] !== 0 && (board[y + o.y] && board[y + o.y][x + o.x]) !== 0) return true; return false;
     }
 
-    function triggerGameOver() {
-        gameState = 'GAMEOVER'; if (activeMode) activeMode.onGameOver();
-        if (isMultiplayerActive && networkConn && networkConn.open) { networkConn.send({ type: 'game_over' }); }
-        document.getElementById('game-over').style.display = 'flex'; document.getElementById('final-score').innerText = score;
-        if (score > highScore) { highScore = score; localStorage.setItem(`tetrisHigh_${selectedModeId}`, highScore); }
+    // OVERHAULED VICTORY LOGIC
+    function triggerGameOver(isWin = false) {
+        gameState = 'GAMEOVER'; 
+        
+        const goTitle = document.getElementById('go-title');
+        const goDesc = document.getElementById('go-desc');
+        const goBtnPlay = document.getElementById('go-btn-play');
+
+        if (isWin) {
+            goTitle.innerText = "YOU WIN!";
+            goTitle.style.color = "#00e676";
+            goTitle.style.textShadow = "0 0 15px #00e676";
+            goDesc.innerHTML = `Opponent topped out!<br><span style="font-size:1.2rem; color:#fff; font-family:var(--font-game);">Victory!</span>`;
+            goBtnPlay.style.background = "rgba(0, 230, 118, 0.2)";
+            goBtnPlay.style.borderColor = "#00e676";
+        } else {
+            if (activeMode) activeMode.onGameOver();
+            if (isMultiplayerActive && networkConn && networkConn.open) { networkConn.send({ type: 'game_over' }); }
+            
+            goTitle.innerText = "GAME OVER";
+            goTitle.style.color = "#ff1744";
+            goTitle.style.textShadow = "0 0 15px #ff1744";
+            goDesc.innerHTML = `Final Score: <br><span style="font-size:1.5rem; color:#fff; font-family:var(--font-game);">${score}</span>`;
+            goBtnPlay.style.background = "rgba(255, 23, 68, 0.2)";
+            goBtnPlay.style.borderColor = "#ff1744";
+            
+            if (score > highScore) { highScore = score; localStorage.setItem(`tetrisHigh_${selectedModeId}`, highScore); }
+        }
+
+        document.getElementById('game-over').style.display = 'flex'; 
     }
 
     function lockPiece() {
@@ -674,21 +778,13 @@
         if (isMultiplayerActive && networkConn && networkConn.open) { networkConn.send({ type: 'sync_board', board: board, score: score, lines: lines }); }
     }
 
-    function playerDrop() {
-        player.pos.y++;
-        if (collide(board, player)) { player.pos.y--; if (lockTimer === 0) lockTimer = performance.now(); } 
-        else { lockTimer = 0; dropCounter = 0; }
-    }
-
+    function playerDrop() { player.pos.y++; if (collide(board, player)) { player.pos.y--; if (lockTimer === 0) lockTimer = performance.now(); } else { lockTimer = 0; dropCounter = 0; } }
     function playerHardDrop() { while (!collide(board, player)) { player.pos.y++; score += 2; } player.pos.y--; lockPiece(); }
-
     function resetLockDelay() { if (lockTimer !== 0 && lockResets < MAX_LOCK_RESETS) { lockTimer = performance.now(); lockResets++; } }
-
     function playerMove(offset) { player.pos.x += offset; if (collide(board, player)) player.pos.x -= offset; else { playSound('move'); resetLockDelay(); } }
-
+    
     function playerRotate() {
-        if (player.matrix.length === 1) return;
-        const pos = player.pos.x; let offset = 1;
+        if (player.matrix.length === 1) return; const pos = player.pos.x; let offset = 1;
         for (let y = 0; y < player.matrix.length; ++y) { for (let x = 0; x < y; ++x) { [player.matrix[x][y], player.matrix[y][x]] = [player.matrix[y][x], player.matrix[x][y]]; } }
         player.matrix.forEach(row => row.reverse());
         while (collide(board, player)) {
@@ -703,14 +799,8 @@
     }
 
     function getGhostPos() { const ghost = { matrix: player.matrix, pos: { x: player.pos.x, y: player.pos.y } }; while (!collide(board, ghost)) ghost.pos.y++; ghost.pos.y--; return ghost; }
-
-    function getRandomPiece() { 
-        if (Math.random() < 0.08) return PIECES[8]; 
-        let piece = PIECES[Math.floor(Math.random() * 7) + 1];
-        if (activeMode && activeMode.iPieceBias && piece !== PIECES[1] && Math.random() < 0.5) piece = PIECES[1];
-        return piece;
-    }
-
+    function getRandomPiece() { if (Math.random() < 0.08) return PIECES[8]; let piece = PIECES[Math.floor(Math.random() * 7) + 1]; if (activeMode && activeMode.iPieceBias && piece !== PIECES[1] && Math.random() < 0.5) piece = PIECES[1]; return piece; }
+    
     function playerHold() {
         if (!player.canHold) return;
         if (player.holdMatrix === null) { player.holdMatrix = player.matrix; playerReset(false); } 
@@ -724,7 +814,7 @@
         player.matrix = player.nextMatrix; player.nextMatrix = getRandomPiece();
         player.pos.y = 0; player.pos.x = Math.floor(COLS / 2) - Math.floor(player.matrix[0].length / 2);
         drawMiniCanvas(nextCtx, nextCanvas, player.nextMatrix);
-        if (collide(board, player)) triggerGameOver();
+        if (collide(board, player)) triggerGameOver(false);
     }
 
     function arenaSweep() {
@@ -743,22 +833,36 @@
 
     function updateScore() { document.getElementById('score').innerText = score; document.getElementById('lines').innerText = lines; document.getElementById('level').innerText = level; document.getElementById('high-score').innerText = highScore; }
 
-    // --- State Managers ---
     function startGame() {
-        initAudio(); document.getElementById('mode-menu').style.display = 'none';
+        initAudio(); 
+        document.getElementById('mode-menu').style.display = 'none';
+        document.getElementById('main-title').style.display = 'none';
+        
+        document.getElementById('btn-settings').style.display = 'none';
+        document.getElementById('btn-pause').style.display = 'flex';
+
+        document.getElementById('game-layout').style.display = 'flex';
+        document.getElementById('controls-layout').style.display = 'flex';
+
         if (isMultiplayerActive) { document.getElementById('sp-stats').style.display = 'none'; document.getElementById('mp-stats').style.display = 'flex'; } 
         else { document.getElementById('sp-stats').style.display = 'block'; document.getElementById('mp-stats').style.display = 'none'; }
 
         switch(selectedModeId) {
-            case 'classic': activeMode = new ClassicMode(); break; case 'rising': activeMode = new RisingCoreMode(); break;
-            case 'meltdown': activeMode = new MeltdownMode(); break; case 'earthquake': activeMode = new EarthquakeMode(); break;
-            case 'blueprint': activeMode = new BlueprintMode(); break; case 'dungeon': activeMode = new DungeonMode(); break;
-            case 'boss': activeMode = new BossBattleMode(); break; case 'gravity': activeMode = new GravityShiftMode(); break;
-            case 'rewind': activeMode = new RewindMode(); break; case 'phantom': activeMode = new PhantomMode(); break;
-            case 'roguelike': activeMode = new RoguelikeMode(); break;
+            case 'classic': activeMode = new ClassicMode(); break; 
+            case 'rising': activeMode = new RisingCoreMode(); break;
+            case 'meltdown': activeMode = new MeltdownMode(); break; 
+            case 'earthquake': activeMode = new EarthquakeMode(); break;
+            case 'blueprint': activeMode = new BlueprintMode(); break; 
+            case 'dungeon': activeMode = new DungeonMode(); break;
+            case 'boss': activeMode = new BossBattleMode(); break; 
+            case 'gravity': activeMode = new GravityShiftMode(); break;
+            case 'rewind': activeMode = new RewindMode(); break; 
+            case 'phantom': activeMode = new PhantomMode(); break;
+            case 'roguelike': activeMode = new RoguelikeMode(); break; 
+            default: activeMode = new ClassicMode();
         }
 
-        document.getElementById('mode-display').innerText = MODES_DATA.find(m => m.id===selectedModeId).name.toUpperCase();
+        document.getElementById('mode-display').innerText = MODES_DATA.find(m => m.id===selectedModeId).name;
         loadSaveData(); resetGame();
     }
 
@@ -766,14 +870,14 @@
     function resumeGame() { gameState = 'PLAYING'; document.getElementById('pause-screen').style.display = 'none'; lastTime = performance.now(); }
 
     function resetGame() {
-        LOCK_DELAY_MS = 500; // Reset slide time
+        LOCK_DELAY_MS = 500;
         board = createMatrix(COLS, ROWS); score = 0; lines = 0; level = 1; dropInterval = 1000;
         player.holdMatrix = null; player.canHold = true; particles = []; document.getElementById('rewind-btn-container').style.display = 'none';
         
         if (activeMode) activeMode.onStart(); drawMiniCanvas(holdCtx, holdCanvas, player.holdMatrix); document.getElementById('game-over').style.display = 'none';
         
         if(isMultiplayerActive) {
-            const oppCtx = document.getElementById('opponent-canvas').getContext('2d'); oppCtx.fillStyle = '#000'; oppCtx.fillRect(0, 0, 60, 120); document.getElementById('opp-score').innerText = '0';
+            const oppCtx = document.getElementById('opponent-canvas').getContext('2d'); oppCtx.clearRect(0, 0, 60, 120); document.getElementById('opp-score').innerText = '0';
         }
 
         updateScore(); playerReset(); gameState = 'PLAYING'; lastTime = performance.now();
@@ -790,7 +894,6 @@
         draw(); animationId = requestAnimationFrame(update);
     }
 
-    // --- Inputs ---
     document.addEventListener('keydown', e => {
         if (e.keyCode === 27 || e.keyCode === 80) { togglePause(); return; } if (gameState !== 'PLAYING') return;
         if (e.keyCode === 37) playerMove(-1); else if (e.keyCode === 39) playerMove(1); else if (e.keyCode === 40) { playerDrop(); score++; updateScore(); } 
@@ -826,7 +929,7 @@
 
     function drawOpponentBoard(oppBoard) {
         const oppCanvas = document.getElementById('opponent-canvas'); const oppCtx = oppCanvas.getContext('2d'); const OPP_BLOCK_SIZE = 6; 
-        oppCtx.fillStyle = '#000'; oppCtx.fillRect(0, 0, oppCanvas.width, oppCanvas.height);
+        oppCtx.clearRect(0, 0, oppCanvas.width, oppCanvas.height);
         oppBoard.forEach((row, y) => { row.forEach((value, x) => { if (value !== 0) { oppCtx.fillStyle = COLORS[value]; oppCtx.fillRect(x * OPP_BLOCK_SIZE, y * OPP_BLOCK_SIZE, OPP_BLOCK_SIZE, OPP_BLOCK_SIZE); } }); });
     }
 
@@ -834,7 +937,7 @@
         document.getElementById('connection-status').innerText = "Opponent Connected! Starting Game..."; isMultiplayerActive = true;
         networkConn.on('data', (data) => {
             if (data.type === 'sync_board') { document.getElementById('opp-score').innerText = data.score; drawOpponentBoard(data.board); }
-            if (data.type === 'game_over') { alert("Your opponent topped out! YOU WIN!"); gameState = 'GAMEOVER'; }
+            if (data.type === 'game_over') { triggerGameOver(true); } // triggers win screen
         });
         setTimeout(() => { selectedModeId = 'classic'; startGame(); }, 2000);
     }
@@ -845,12 +948,48 @@
         initPeerJS(false); peer.on('open', () => { document.getElementById('connection-status').innerText = "Joining Lobby..."; networkConn = peer.connect(hostId); setupGameConnection(); });
     });
 
-    document.getElementById('btn-copy').addEventListener('click', () => {
+        document.getElementById('btn-copy').addEventListener('click', () => {
         const codeText = document.getElementById('display-id').innerText;
-        navigator.clipboard.writeText(codeText).then(() => { const btn = document.getElementById('btn-copy'); btn.innerText = '✅ COPIED'; setTimeout(() => btn.innerText = '📋 COPY', 2000); });
+        const btn = document.getElementById('btn-copy');
+        
+        const showCopied = () => {
+            btn.innerText = 'COPIED'; 
+            setTimeout(() => btn.innerText = 'COPY', 2000);
+        };
+
+        // 1. Try modern secure clipboard API first
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText)
+                .then(showCopied)
+                .catch(() => fallbackCopy(codeText, showCopied));
+        } else {
+            // 2. Fallback for local testing (file://) and older browsers
+            fallbackCopy(codeText, showCopied);
+        }
     });
 
+    // Invisible text box fallback method
+    function fallbackCopy(text, callback) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        // Keep it out of view so the screen doesn't jump
+        textArea.style.position = "fixed"; 
+        textArea.style.top = "-9999px";
+        document.body.appendChild(textArea);
+        
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            callback();
+        } catch (err) {
+            console.error('Fallback copy failed', err);
+        }
+        document.body.removeChild(textArea);
+    }
+
+    // Initialize Menu
     buildMenu(); drawGrid(); update();
+
 </script>
 </body>
 </html>
