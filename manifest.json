@@ -1,0 +1,23 @@
+{
+  "name": "Neon Tetris Universe",
+  "short_name": "Neon Tetris",
+  "description": "A modular HTML5 Tetris game with P2P Multiplayer and Roguelike mechanics.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f0f13",
+  "theme_color": "#0f0f13",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ]
+}
