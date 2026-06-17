@@ -10,7 +10,6 @@
     <link rel="icon" type="image/svg+xml" href="logo.svg">
     <link rel="apple-touch-icon" href="logo.svg">
 
-    <!-- Fonts: Orbitron for titles/headers, Poppins for clean UI text -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     
@@ -98,7 +97,7 @@
         .t-red { color: #ff3333; } .t-org { color: #ffaa00; } .t-grn { color: #66cc00; }
         .t-blu { color: #3399ff; } .t-pur { color: #9933ff; } .t-pnk { color: #ff3399; }
 
-        /* Main Glass Menu Panel - OVERFLOW FIX APPLIED HERE */
+        /* Main Glass Menu Panel */
         .glass-panel {
             background: var(--panel-bg); border: 1px solid var(--panel-border);
             border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.8), inset 0 2px 5px rgba(0,229,255,0.1);
@@ -124,7 +123,7 @@
         .divider.purple::before { border-image: linear-gradient(to left, var(--accent-purple), transparent) 1; box-shadow: 0 0 5px var(--accent-purple); }
         .divider.purple::after { border-image: linear-gradient(to right, var(--accent-purple), transparent) 1; box-shadow: 0 0 5px var(--accent-purple); }
 
-        /* Premium Mode Cards - FLEX SCROLL FIX */
+        /* Premium Mode Cards */
         .mode-list {
             display: flex; flex-direction: column; gap: 10px; 
             flex: 1; min-height: 50px; overflow-y: auto; touch-action: pan-y; margin-bottom: 15px;
@@ -160,9 +159,7 @@
 
         /* Custom Mode Colors */
         .card-classic { background: #071533; border-color: #1a4f8b; }
-        .card-classic .mode-icon-box { background: #2196f3; border: 1px solid #64b5f6; }
         .card-rising { background: #130a2b; border-color: #4a2185; }
-        .card-rising .mode-icon-box { background: #9c27b0; border: 1px solid #ce93d8; }
 
         /* Multiplayer 3-Grid System */
         .mp-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; width: 100%; margin-bottom: 10px; flex-shrink: 0;}
@@ -187,7 +184,7 @@
         }
         .mp-code input::placeholder { color: #6a7b9c; font-weight: 600; }
 
-        /* Hero Start Button - PADDING/MARGIN FIX */
+        /* Hero Start Button */
         .btn-start-hero {
             background: linear-gradient(180deg, #00c853, #00802b);
             border: 1px solid #00e676; border-radius: 12px; width: 100%; padding: 12px; 
@@ -235,7 +232,10 @@
             background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.3); width: 100%; box-sizing: border-box;
         }
 
-        .stat-value { font-family: var(--font-game); font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 12px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+        .stat-value { 
+            font-family: var(--font-game); font-size: 0.95rem; font-weight: 700; color: #fff; 
+            margin-bottom: 12px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); word-break: break-word; text-align: center;
+        }
         .accent-stat { color: var(--accent); text-shadow: 0 0 10px rgba(0, 229, 255, 0.4); }
         
         .main-canvas-wrapper {
@@ -245,13 +245,13 @@
         canvas { display: block; border-radius: 8px; }
         .mini-canvas { width: 60px; height: 60px; background: rgba(0,0,0,0.6); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
 
-        /* Overlays (Pause/Game Over/Level Up) */
+        /* Overlays */
         .game-overlay {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
             display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 500;
             border-radius: 12px; text-align: center; padding: 20px; box-sizing: border-box;
         }
-        .game-overlay h2 { font-size: 1.8rem; margin: 0 0 10px 0; letter-spacing: 1px; font-family: var(--font-game);}
+        .game-overlay h2 { font-size: 1.6rem; margin: 0 0 10px 0; letter-spacing: 1px; font-family: var(--font-game);}
         .btn-overlay { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-weight: 800; padding: 12px; border-radius: 10px; margin-top: 10px; cursor: pointer; width: 100%; font-family: inherit; transition: 0.2s;}
         .btn-overlay:hover { background: rgba(255,255,255,0.2); }
         
@@ -302,17 +302,14 @@
             <span class="t-red">T</span><span class="t-org">E</span><span class="t-grn">T</span><span class="t-blu">R</span><span class="t-pur">I</span><span class="t-pnk">S</span>
         </div>
 
-        <!-- Main Mode Menu (Glass Panel) -->
         <div id="mode-menu" class="glass-panel">
             <div class="divider"><span>SELECT MODE</span></div>
             
             <div class="mode-list" id="mode-list-container">
-                <!-- Modes generated dynamically -->
-            </div>
+                </div>
             
             <div class="divider purple"><span>MULTIPLAYER</span></div>
             
-            <!-- Exact 3-Grid Multiplayer Layout -->
             <div class="mp-grid">
                 <div class="mp-box mp-host" id="btn-host">
                     <div class="mp-icon">👤</div>
@@ -342,7 +339,6 @@
             </div>
             <div id="connection-status" style="color: var(--accent-green); font-size: 0.8rem; text-align: center; min-height: 15px; font-weight: 600; flex-shrink: 0; margin-bottom: 5px;"></div>
 
-            <!-- Giant Hero Start Button -->
             <div class="btn-start-hero" onclick="startGame()">
                 <div class="icon">▶</div>
                 <div class="text-box">
@@ -352,7 +348,6 @@
             </div>
         </div>
 
-        <!-- Settings Modal -->
         <div id="settings-modal">
             <div class="settings-content">
                 <h2>SETTINGS</h2>
@@ -365,31 +360,26 @@
             </div>
         </div>
 
-        <!-- Active Game Layout -->
         <div id="game-layout">
-            <!-- Left Panel -->
             <div class="game-panel">
                 <div id="mode-display">CLASSIC</div>
                 <h3>HOLD</h3>
                 <canvas id="hold-canvas" class="mini-canvas" width="60" height="60"></canvas>
                 <h3>SCORE</h3>
                 <div id="score" class="stat-value">0</div>
-                <h3>LEVEL</h3>
+                <h3 id="level-label">LEVEL</h3>
                 <div id="level" class="stat-value accent-stat">1</div>
             </div>
 
-            <!-- Main Board -->
             <div class="main-canvas-wrapper" style="position: relative;">
                 <canvas id="tetris-canvas" width="200" height="400"></canvas>
                 
-                <!-- In-Game Overlays -->
                 <div id="pause-screen" class="game-overlay" style="display: none;">
                     <h2 style="color:var(--accent);">PAUSED</h2>
                     <button class="btn-overlay" onclick="resumeGame()">RESUME</button>
                     <button class="btn-overlay" onclick="showModeMenu()">MAIN MENU</button>
                 </div>
 
-                <!-- OVERHAULED VICTORY / GAMEOVER SCREEN -->
                 <div id="game-over" class="game-overlay" style="display: none;">
                     <h2 id="go-title" style="color:#ff1744; text-shadow: 0 0 15px #ff1744;">GAME OVER</h2>
                     <p id="go-desc" style="color:#aaa; margin:0 0 15px 0;">Final Score: <br><span style="font-size:1.5rem; color:#fff; font-family:var(--font-game);">0</span></p>
@@ -404,7 +394,6 @@
                 </div>
             </div>
 
-            <!-- Right Panel -->
             <div class="game-panel" id="right-panel">
                 <h3>NEXT</h3>
                 <canvas id="next-canvas" class="mini-canvas" width="60" height="60"></canvas>
@@ -425,7 +414,6 @@
             </div>
         </div>
 
-        <!-- Touch Controls -->
         <div id="controls-layout">
             <div id="rewind-btn-container" style="display: none; margin-bottom: 2px;">
                 <button id="btn-rewind" class="ctrl-pad" style="width:100%; background:rgba(213,0,249,0.1); border-color:rgba(213,0,249,0.4); color:#d500f9;">⏪ REWIND (3)</button>
@@ -505,6 +493,14 @@
     const COLORS = [ null, '#00e5ff', '#2962ff', '#ff9800', '#ffd600', '#4caf50', '#9c27b0', '#ff3333', '#ffffff' ];
     const PIECES = [ [], [[0,0,0,0], [1,1,1,1], [0,0,0,0], [0,0,0,0]], [[2,0,0], [2,2,2], [0,0,0]], [[0,0,3], [3,3,3], [0,0,0]], [[4,4], [4,4]], [[0,5,5], [5,5,0], [0,0,0]], [[0,6,0], [6,6,6], [0,0,0]], [[7,7,0], [0,7,7], [0,0,0]], [[8]] ];
 
+    const svgO = `<svg width="24" height="24" viewBox="0 0 20 20"><rect width="20" height="20" fill="currentColor"/></svg>`;
+    const svgT = `<svg width="24" height="24" viewBox="0 0 30 20"><rect width="30" height="10" fill="currentColor"/><rect x="10" y="10" width="10" height="10" fill="currentColor"/></svg>`;
+    const svgI = `<svg width="24" height="24" viewBox="0 0 40 10"><rect width="40" height="10" fill="currentColor"/></svg>`;
+    const svgL = `<svg width="24" height="24" viewBox="0 0 20 30"><rect width="10" height="30" fill="currentColor"/><rect x="10" y="20" width="10" height="10" fill="currentColor"/></svg>`;
+    const svgJ = `<svg width="24" height="24" viewBox="0 0 20 30"><rect x="10" width="10" height="30" fill="currentColor"/><rect y="20" width="10" height="10" fill="currentColor"/></svg>`;
+    const svgZ = `<svg width="24" height="24" viewBox="0 0 30 20"><rect width="20" height="10" fill="currentColor"/><rect x="10" y="10" width="20" height="10" fill="currentColor"/></svg>`;
+    const svgS = `<svg width="24" height="24" viewBox="0 0 30 20"><rect x="10" width="20" height="10" fill="currentColor"/><rect y="10" width="20" height="10" fill="currentColor"/></svg>`;
+
     let board = []; let score = 0, lines = 0, level = 1, highScore = 0;
     let dropCounter = 0, dropInterval = 1000, lastTime = 0, gameState = 'MENU'; 
     let animationId, flashOpacity = 0, particles = [];
@@ -513,62 +509,182 @@
 
     class GameMode {
         constructor() { this.scoreMultiplier = 1; this.preventSweep = false; }
-        onStart() {} onUpdate(deltaTime) {} onDraw(ctx) {}
+        onStart() { this.scoreMultiplier = 1; } 
+        onUpdate(deltaTime) {} onDraw(ctx) {}
         onPieceLock(playerObj) {} onLineClear(count) {} onGameOver() {}
     }
 
     let activeMode = null; let selectedModeId = 'classic';
 
     const MODES_DATA = [
-        { id: 'classic', name: 'CLASSIC MODE', desc: 'Clear lines and survive.', diff: 'EASY', diffClass: 'badge-easy', cardClass: 'card-classic' },
-        { id: 'rising', name: 'RISING CORE', desc: 'The speed never stops.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-rising' },
-        { id: 'meltdown', name: 'MELTDOWN', desc: 'Blocks vanish quickly!', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-classic' },
-        { id: 'earthquake', name: 'EARTHQUAKE', desc: 'Board shifts randomly.', diff: 'MED', diffClass: 'badge-med', cardClass: 'card-classic' },
-        { id: 'blueprint', name: 'BLUEPRINT', desc: 'Match ghost patterns.', diff: 'MED', diffClass: 'badge-med', cardClass: 'card-classic' },
-        { id: 'dungeon', name: 'DUNGEON', desc: 'Gain XP to level up.', diff: 'EASY', diffClass: 'badge-easy', cardClass: 'card-rising' },
-        { id: 'boss', name: 'BOSS BATTLE', desc: 'Damage the Boss HP.', diff: 'MED', diffClass: 'badge-hard', cardClass: 'card-classic' },
-        { id: 'gravity', name: 'GRAVITY SHIFT', desc: 'Locked blocks slide.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-classic' },
-        { id: 'rewind', name: 'REWIND MODE', desc: 'Gain 3 Undo Charges.', diff: 'EASY', diffClass: 'badge-easy', cardClass: 'card-rising' },
-        { id: 'phantom', name: 'PHANTOM MATRIX', desc: 'Blocks turn invisible.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-rising' },
-        { id: 'roguelike', name: 'ROGUELIKE', desc: 'Pick powerful upgrades.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-classic' }
+        { id: 'classic', name: 'CLASSIC MODE', desc: 'Clear lines and survive.', diff: 'EASY', diffClass: 'badge-easy', cardClass: 'card-classic', color: '#00e5ff', svg: svgO },
+        { id: 'rising', name: 'RISING CORE', desc: 'The speed never stops.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-rising', color: '#9c27b0', svg: svgL },
+        { id: 'meltdown', name: 'MELTDOWN', desc: 'Blocks vanish quickly!', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-classic', color: '#ff9800', svg: svgZ },
+        { id: 'earthquake', name: 'EARTHQUAKE', desc: 'Board shifts randomly.', diff: 'MED', diffClass: 'badge-med', cardClass: 'card-classic', color: '#ffd600', svg: svgS },
+        { id: 'blueprint', name: 'BLUEPRINT', desc: 'Match ghost patterns.', diff: 'MED', diffClass: 'badge-med', cardClass: 'card-classic', color: '#2962ff', svg: svgT },
+        { id: 'dungeon', name: 'DUNGEON', desc: 'Gain XP to level up.', diff: 'EASY', diffClass: 'badge-easy', cardClass: 'card-rising', color: '#9d4edd', svg: svgJ },
+        { id: 'boss', name: 'BOSS BATTLE', desc: 'Damage the Boss HP.', diff: 'MED', diffClass: 'badge-hard', cardClass: 'card-classic', color: '#ff3333', svg: svgI },
+        { id: 'laser', name: 'LASER STRIKE', desc: 'Dodge orbital strikes.', diff: 'MED', diffClass: 'badge-med', cardClass: 'card-rising', color: '#ff3333', svg: svgI },
+        { id: 'gravity', name: 'GRAVITY SHIFT', desc: 'Locked blocks slide.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-classic', color: '#00e5ff', svg: svgO },
+        { id: 'rewind', name: 'REWIND MODE', desc: 'Gain 3 Undo Charges.', diff: 'EASY', diffClass: 'badge-easy', cardClass: 'card-rising', color: '#d500f9', svg: svgZ },
+        { id: 'phantom', name: 'PHANTOM MATRIX', desc: 'Blocks turn invisible.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-rising', color: '#4caf50', svg: svgS },
+        { id: 'roguelike', name: 'ROGUELIKE', desc: 'Pick powerful upgrades.', diff: 'HARD', diffClass: 'badge-hard', cardClass: 'card-classic', color: '#00e676', svg: svgT }
     ];
 
-    class ClassicMode extends GameMode {}
+    class ClassicMode extends GameMode {
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); }
+    }
+    
     class RisingCoreMode extends GameMode {
-        constructor() { super(); this.timer = 0; this.coreHeight = 0; }
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.timer = 0; this.coreHeight = 0; }
         onUpdate(dt) { this.timer += dt; if (this.timer > 30000) { this.timer = 0; this.coreHeight++; let y = ROWS - this.coreHeight; if (y >= 0) { board[y][4] = 7; board[y][5] = 7; triggerShake(); } if (y <= 2) triggerGameOver(false); } }
         onDraw(ctx) { ctx.fillStyle='red'; ctx.font='10px Poppins'; ctx.fillText(`Core Expands: ${Math.floor(30 - this.timer/1000)}s`, 5, 15); }
     }
+    
     class MeltdownMode extends GameMode {
-        constructor() { super(); this.timers = createMatrix(COLS, ROWS); }
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.timers = createMatrix(COLS, ROWS); }
         onPieceLock(p) { p.matrix.forEach((row, y) => row.forEach((val, x) => { if (val !== 0) this.timers[p.pos.y + y][p.pos.x + x] = 15; })); }
         onUpdate(dt) { for(let y=0; y<ROWS; y++) for(let x=0; x<COLS; x++) { if(this.timers[y][x] > 0) { this.timers[y][x] -= dt/1000; if(this.timers[y][x] <= 0) { board[y][x] = 0; this.timers[y][x] = 0; } } } }
         onLineClear(c) { for(let y=0; y<ROWS; y++) for(let x=0; x<COLS; x++) if(this.timers[y][x] > 0) this.timers[y][x] = 15; }
         onDraw(ctx) { ctx.fillStyle='#ff9800'; ctx.font='10px Poppins'; ctx.fillText('Decay Active', 5, 15); }
     }
+    
     class EarthquakeMode extends GameMode {
-        constructor() { super(); this.timer = 0; }
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.timer = 0; }
         onUpdate(dt) { this.timer += dt; if (this.timer > 45000) { this.timer = 0; triggerShake(); const dir = Math.random() > 0.5 ? 1 : -1; for(let y=ROWS-1; y>=0; y--) { if (dir===1) { board[y].unshift(0); board[y].pop(); } else { board[y].push(0); board[y].shift(); } } } }
         onDraw(ctx) { ctx.fillStyle='#fff'; ctx.font='10px Poppins'; ctx.fillText(`Quake in: ${Math.floor(45 - this.timer/1000)}s`, 5, 15); }
     }
+    
     class BlueprintMode extends GameMode {
-        constructor() { super(); this.blueprint = createMatrix(COLS, ROWS); this.blueprint[19][2] = 2; this.blueprint[19][3] = 2; this.blueprint[18][2] = 2; this.blueprint[18][3] = 2; }
-        onPieceLock() { let match = true; for(let y=15; y<ROWS; y++) for(let x=0; x<COLS; x++) { if(this.blueprint[y][x] !== 0 && board[y][x] === 0) match = false; } if(match && this.blueprint[19][2] !== 0) { score += 1000; flashOpacity = 0.8; playSound('clear'); this.blueprint = createMatrix(COLS, ROWS); } }
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.generateBlueprint(); }
+        generateBlueprint() {
+            this.blueprint = createMatrix(COLS, ROWS);
+            const piece = PIECES[Math.floor(Math.random() * 7) + 1];
+            const bw = piece[0].length; const bh = piece.length;
+            const rx = Math.floor(Math.random() * (COLS - bw));
+            const ry = ROWS - 1 - Math.floor(Math.random() * 5) - bh; 
+            for(let y=0; y<bh; y++) {
+                for(let x=0; x<bw; x++) {
+                    if(piece[y][x] !== 0) this.blueprint[ry+y][rx+x] = piece[y][x];
+                }
+            }
+        }
+        onPieceLock() { 
+            let match = true; let hasBlueprint = false;
+            for(let y=0; y<ROWS; y++) for(let x=0; x<COLS; x++) { 
+                if(this.blueprint[y][x] !== 0) {
+                    hasBlueprint = true;
+                    if (board[y][x] === 0) match = false; 
+                }
+            } 
+            if(hasBlueprint && match) { score += 1000; flashOpacity = 0.8; playSound('clear'); this.generateBlueprint(); } 
+        }
         onDraw(ctx) { drawMatrix(this.blueprint, {x:0,y:0}, ctx, true); }
     }
+    
     class DungeonMode extends GameMode {
-        constructor() { super(); this.xp = 0; this.maxXP = 10; }
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.xp = 0; this.maxXP = 10; }
         onLineClear(c) { this.xp += c * 2; if (this.xp >= this.maxXP) { this.xp = 0; this.maxXP += 5; score += 500; triggerShake(); playSound('clear'); } }
         onDraw(ctx) { ctx.fillStyle='#9c27b0'; ctx.font='10px Poppins'; ctx.fillText(`XP: ${this.xp}/${this.maxXP}`, 5, 15); }
     }
+
     class BossBattleMode extends GameMode {
-        constructor() { super(); this.bossHP = 100; this.timer = 120; this.dtAcc = 0;}
-        onLineClear(c) { const dmg = [0, 5, 15, 30, 50]; this.bossHP -= dmg[c]; if(this.bossHP <= 0) { score += 5000; this.bossHP = 100 + (level*20); } triggerShake(); }
-        onUpdate(dt) { this.dtAcc += dt; if(this.dtAcc > 1000) { this.timer--; this.dtAcc = 0; } if(this.timer <= 0) triggerGameOver(false); }
-        onDraw(ctx) { ctx.fillStyle = '#ff3333'; ctx.fillRect(10, 10, (this.bossHP/100)*180, 10); ctx.fillStyle = '#fff'; ctx.fillText(`Boss Time: ${this.timer}s`, 10, 35); }
+        constructor() { super(); this.onStart(); }
+        onStart() {
+            super.onStart();
+            this.bossesDefeated = 0; 
+            this.bossHP = 100; 
+            this.timer = 120; 
+            this.dtAcc = 0; 
+            this.devouring = false; 
+            this.devourY = 0; 
+            this.devourTimer = 0;
+            document.getElementById('level-label').innerText = 'BOSSES';
+            highScore = localStorage.getItem(`tetrisHigh_boss`) || 0;
+            document.getElementById('high-score').innerText = highScore;
+        }
+        onLineClear(c) { 
+            if (this.devouring) return;
+            const dmg = [0, 5, 15, 30, 50]; this.bossHP -= dmg[c]; 
+            if(this.bossHP <= 0) { 
+                this.bossesDefeated++;
+                score += 5000; 
+                this.bossHP = 100 + (this.bossesDefeated * 20); 
+                this.timer += 30; // +30s per boss defeated
+            } 
+            triggerShake(); 
+        }
+        onUpdate(dt) { 
+            if (this.devouring) {
+                this.devourTimer += dt;
+                if (this.devourTimer > 50) {
+                    this.devourTimer = 0;
+                    if (this.devourY < ROWS) {
+                        for(let x=0; x<COLS; x++) board[this.devourY][x] = 7;
+                        this.devourY++; playSound('drop');
+                    } else {
+                        // FIX: Hard stop the devouring loop before triggering Game Over to prevent UI locking and spamming
+                        this.devouring = false; 
+                        
+                        if (this.bossesDefeated > highScore) { highScore = this.bossesDefeated; localStorage.setItem(`tetrisHigh_boss`, highScore); }
+                        triggerGameOver(false, "DEVOURED!", `Total Bosses Defeated: <br><span style="font-size:1.5rem; color:#fff; font-family:var(--font-game);">${this.bossesDefeated}</span><br><span style="font-size:0.8rem;color:#ffd600;">Highest: ${highScore}</span>`);
+                    }
+                }
+                return;
+            }
+
+            this.dtAcc += dt; 
+            if(this.dtAcc > 1000) { this.timer--; this.dtAcc = 0; } 
+            if(this.timer <= 0 && !this.devouring) { 
+                this.devouring = true;
+                gameState = 'DEVOURING'; 
+            } 
+        }
+        onDraw(ctx) { 
+            ctx.fillStyle = '#ff3333'; ctx.fillRect(10, 10, Math.max(0, (this.bossHP/(100+(this.bossesDefeated*20)))*180), 10); 
+            ctx.fillStyle = '#fff'; ctx.fillText(`Boss Time: ${this.timer}s`, 10, 35); 
+            if (this.devouring) { ctx.fillStyle = 'rgba(255, 0, 0, 0.4)'; ctx.fillRect(0,0, canvas.width, canvas.height); }
+        }
     }
+
+    class LaserStrikeMode extends GameMode {
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.timer = 0; this.warningCol = -1; this.laserActive = 0; }
+        onUpdate(dt) {
+            this.timer += dt;
+            if (this.laserActive > 0) {
+                this.laserActive -= dt;
+                if (this.laserActive <= 0) this.laserActive = 0;
+                return;
+            }
+            if (this.timer > 15000 && this.warningCol === -1) { this.warningCol = Math.floor(Math.random() * COLS); }
+            if (this.timer > 18000 && this.warningCol !== -1) {
+                triggerShake(); playSound('clear');
+                for(let y=0; y<ROWS; y++) board[y][this.warningCol] = 0;
+                this.laserActive = 500; this.warningCol = -1; this.timer = 0;
+            }
+        }
+        onDraw(ctx) {
+            if (this.warningCol !== -1) {
+                if (Math.floor(Date.now() / 150) % 2 === 0) { ctx.fillStyle = 'rgba(255, 0, 0, 0.3)'; ctx.fillRect(this.warningCol * BLOCK_SIZE, 0, BLOCK_SIZE, canvas.height); }
+                ctx.fillStyle='red'; ctx.font='10px Poppins'; ctx.fillText(`WARNING COL ${this.warningCol+1}`, 5, 15);
+            }
+            if (this.laserActive > 0) {
+                ctx.fillStyle = '#ff1744'; ctx.fillRect(this.warningCol * BLOCK_SIZE, 0, BLOCK_SIZE, canvas.height);
+                ctx.fillStyle = '#fff'; ctx.fillRect(this.warningCol * BLOCK_SIZE + 4, 0, BLOCK_SIZE - 8, canvas.height);
+            }
+        }
+    }
+
     class GravityShiftMode extends GameMode {
-        constructor() { super(); this.timer = 0; this.dirs = ['DOWN','LEFT','RIGHT']; this.idx = 0; }
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.timer = 0; this.dirs = ['DOWN','LEFT','RIGHT']; this.idx = 0; }
         onUpdate(dt) {
             this.timer += dt;
             if(this.timer > 10000) {
@@ -579,9 +695,10 @@
         }
         onDraw(ctx) { ctx.fillStyle='#00e5ff'; ctx.fillText(`GRAVITY: ${this.dirs[this.idx]}`, 10, 20); }
     }
+
     class RewindMode extends GameMode {
-        constructor() { super(); this.history = []; this.rewinds = 3; }
-        onStart() { this.history = []; this.rewinds = 3; document.getElementById('rewind-btn-container').style.display = 'block'; document.getElementById('btn-rewind').innerText = `⏪ REWIND (3)`; }
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.history = []; this.rewinds = 3; document.getElementById('rewind-btn-container').style.display = 'block'; document.getElementById('btn-rewind').innerText = `⏪ REWIND (3)`; }
         onPieceLock() { if(this.history.length > 5) this.history.shift(); this.history.push({ b: board.map(r => [...r]), s: score, p: JSON.parse(JSON.stringify(player)) }); }
         doRewind() {
             if(this.rewinds > 0 && this.history.length > 0) {
@@ -592,8 +709,10 @@
         }
         onGameOver() { document.getElementById('rewind-btn-container').style.display = 'none'; }
     }
+
     class PhantomMode extends GameMode {
-        constructor() { super(); this.timer = 0; this.radar = 1.0; }
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.timer = 0; this.radar = 1.0; }
         onUpdate(dt) { this.timer += dt; if (this.timer > 10000) { this.timer = 0; this.radar = 1.0; triggerShake(); } if (this.radar > 0) this.radar -= dt / 2000; }
         onLineClear() { this.radar = 1.0; }
         onDraw(ctx) {
@@ -602,9 +721,10 @@
             ctx.fillStyle = '#00e5ff'; ctx.fillText(`SCAN IN: ${Math.max(0, Math.ceil(10 - this.timer/1000))}s`, 10, 20);
         }
     }
+
     class RoguelikeMode extends GameMode {
-        constructor() { super(); this.nextUpgradeLine = 5; this.iPieceBias = false; this.history = []; this.rewinds = 0; }
-        onStart() { this.nextUpgradeLine = 5; this.iPieceBias = false; this.history = []; this.rewinds = 0; }
+        constructor() { super(); this.onStart(); }
+        onStart() { super.onStart(); this.nextUpgradeLine = 5; this.iPieceBias = false; this.history = []; this.rewinds = 0; } // FIX: Ensure Score Multiplier correctly resets via super.onStart()
         onPieceLock() { if(this.history.length > 5) this.history.shift(); this.history.push({ b: board.map(r => [...r]), s: score, p: JSON.parse(JSON.stringify(player)) }); }
         doRewind() {
             if(this.rewinds > 0 && this.history.length > 0) {
@@ -649,7 +769,9 @@
             div.onclick = () => { selectedModeId = m.id; buildMenu(); };
             div.innerHTML = `
                 <div class="mode-card-left">
-                    <div class="mode-icon-box"></div>
+                    <div class="mode-icon-box" style="color:${m.color}; border: 1px solid ${m.color}55; background: ${m.color}22;">
+                        ${m.svg}
+                    </div>
                     <div class="mode-details">
                         <div class="mode-title">${m.name}</div>
                         <div class="badge ${m.diffClass}">${m.diff}</div>
@@ -670,7 +792,7 @@
         document.getElementById('controls-layout').style.display = 'none';
         document.getElementById('btn-pause').style.display = 'none';
         document.getElementById('btn-settings').style.display = 'flex';
-        document.getElementById('mode-menu').style.display = 'flex'; // Fix to show correctly
+        document.getElementById('mode-menu').style.display = 'flex'; 
         document.getElementById('main-title').style.display = 'flex';
         buildMenu(); 
     }
@@ -738,8 +860,7 @@
         for (let y = 0; y < m.length; ++y) for (let x = 0; x < m[y].length; ++x) if (m[y][x] !== 0 && (board[y + o.y] && board[y + o.y][x + o.x]) !== 0) return true; return false;
     }
 
-    // OVERHAULED VICTORY LOGIC
-    function triggerGameOver(isWin = false) {
+    function triggerGameOver(isWin = false, customTitle = null, customDesc = null) {
         gameState = 'GAMEOVER'; 
         
         const goTitle = document.getElementById('go-title');
@@ -747,24 +868,38 @@
         const goBtnPlay = document.getElementById('go-btn-play');
 
         if (isWin) {
-            goTitle.innerText = "YOU WIN!";
+            goTitle.innerText = customTitle || "YOU WIN!";
             goTitle.style.color = "#00e676";
             goTitle.style.textShadow = "0 0 15px #00e676";
-            goDesc.innerHTML = `Opponent topped out!<br><span style="font-size:1.2rem; color:#fff; font-family:var(--font-game);">Victory!</span>`;
+            goDesc.innerHTML = customDesc || `Opponent topped out!<br><span style="font-size:1.2rem; color:#fff; font-family:var(--font-game);">Victory!</span>`;
             goBtnPlay.style.background = "rgba(0, 230, 118, 0.2)";
             goBtnPlay.style.borderColor = "#00e676";
         } else {
-            if (activeMode) activeMode.onGameOver();
+            if (activeMode && typeof activeMode.onGameOver === 'function' && gameState !== 'DEVOURING') activeMode.onGameOver();
             if (isMultiplayerActive && networkConn && networkConn.open) { networkConn.send({ type: 'game_over' }); }
             
-            goTitle.innerText = "GAME OVER";
+            // Fix: Override for normal Boss Battle top-out deaths
+            if (selectedModeId === 'boss' && !customDesc) {
+                customTitle = "GAME OVER";
+                customDesc = `Total Bosses Defeated: <br><span style="font-size:1.5rem; color:#fff; font-family:var(--font-game);">${activeMode.bossesDefeated}</span><br><span style="font-size:0.8rem;color:#ffd600;">Highest: ${Math.max(highScore, activeMode.bossesDefeated)}</span>`;
+                if (activeMode.bossesDefeated > highScore) { 
+                    highScore = activeMode.bossesDefeated; 
+                    localStorage.setItem(`tetrisHigh_boss`, highScore); 
+                }
+            }
+
+            goTitle.innerText = customTitle || "GAME OVER";
             goTitle.style.color = "#ff1744";
             goTitle.style.textShadow = "0 0 15px #ff1744";
-            goDesc.innerHTML = `Final Score: <br><span style="font-size:1.5rem; color:#fff; font-family:var(--font-game);">${score}</span>`;
+            goDesc.innerHTML = customDesc || `Final Score: <br><span style="font-size:1.5rem; color:#fff; font-family:var(--font-game);">${score}</span>`;
             goBtnPlay.style.background = "rgba(255, 23, 68, 0.2)";
             goBtnPlay.style.borderColor = "#ff1744";
             
-            if (score > highScore) { highScore = score; localStorage.setItem(`tetrisHigh_${selectedModeId}`, highScore); }
+            // Fix: Only save score to high score if it is NOT Boss Mode
+            if (!customDesc && selectedModeId !== 'boss' && score > highScore) { 
+                highScore = score; 
+                localStorage.setItem(`tetrisHigh_${selectedModeId}`, highScore); 
+            }
         }
 
         document.getElementById('game-over').style.display = 'flex'; 
@@ -831,7 +966,19 @@
         }
     }
 
-    function updateScore() { document.getElementById('score').innerText = score; document.getElementById('lines').innerText = lines; document.getElementById('level').innerText = level; document.getElementById('high-score').innerText = highScore; }
+    function updateScore() { 
+        document.getElementById('score').innerText = score; 
+        document.getElementById('lines').innerText = lines; 
+        
+        // Fix: Force UI to display Bosses Defeated instead of standard Tetris level
+        if (selectedModeId === 'boss' && activeMode) {
+            document.getElementById('level').innerText = activeMode.bossesDefeated || 0;
+        } else {
+            document.getElementById('level').innerText = level; 
+        }
+        
+        document.getElementById('high-score').innerText = highScore; 
+    }
 
     function startGame() {
         initAudio(); 
@@ -855,6 +1002,7 @@
             case 'blueprint': activeMode = new BlueprintMode(); break; 
             case 'dungeon': activeMode = new DungeonMode(); break;
             case 'boss': activeMode = new BossBattleMode(); break; 
+            case 'laser': activeMode = new LaserStrikeMode(); break; 
             case 'gravity': activeMode = new GravityShiftMode(); break;
             case 'rewind': activeMode = new RewindMode(); break; 
             case 'phantom': activeMode = new PhantomMode(); break;
@@ -870,11 +1018,14 @@
     function resumeGame() { gameState = 'PLAYING'; document.getElementById('pause-screen').style.display = 'none'; lastTime = performance.now(); }
 
     function resetGame() {
+        document.getElementById('level-label').innerText = 'LEVEL'; // Reset panel label
         LOCK_DELAY_MS = 500;
         board = createMatrix(COLS, ROWS); score = 0; lines = 0; level = 1; dropInterval = 1000;
         player.holdMatrix = null; player.canHold = true; particles = []; document.getElementById('rewind-btn-container').style.display = 'none';
         
-        if (activeMode) activeMode.onStart(); drawMiniCanvas(holdCtx, holdCanvas, player.holdMatrix); document.getElementById('game-over').style.display = 'none';
+        if (activeMode) activeMode.onStart(); 
+        drawMiniCanvas(holdCtx, holdCanvas, player.holdMatrix); 
+        document.getElementById('game-over').style.display = 'none';
         
         if(isMultiplayerActive) {
             const oppCtx = document.getElementById('opponent-canvas').getContext('2d'); oppCtx.clearRect(0, 0, 60, 120); document.getElementById('opp-score').innerText = '0';
@@ -884,7 +1035,13 @@
     }
 
     function update(time = 0) {
+        // Fix: Allows Boss Devouring animation to process logic independently
+        if (gameState === 'DEVOURING') {
+            lastTime = time; if (activeMode) activeMode.onUpdate(16); draw(); animationId = requestAnimationFrame(update); return;
+        }
+
         if (gameState !== 'PLAYING') { lastTime = time; animationId = requestAnimationFrame(update); return; }
+        
         const deltaTime = time - lastTime; lastTime = time; if (activeMode) activeMode.onUpdate(deltaTime); dropCounter += deltaTime;
         if (lockTimer === 0 && dropCounter > dropInterval) playerDrop();
         if (lockTimer !== 0) {
@@ -920,6 +1077,9 @@
     function generateShortId() { const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let result = ''; for (let i = 0; i < 5; i++) result += chars.charAt(Math.floor(Math.random() * chars.length)); return result; }
 
     function initPeerJS(isHost) {
+        // FIX: Destroy previous peer to prevent connection leaks
+        if (peer) { peer.destroy(); }
+        
         document.getElementById('connection-status').innerText = "Connecting...";
         if (isHost) { const shortId = generateShortId(); peer = new Peer(shortId); } else { peer = new Peer(); }
         peer.on('open', (id) => { if (isHost) { document.getElementById('connection-status').innerText = "Waiting for rival..."; document.getElementById('lobby-info').style.display = 'flex'; document.getElementById('display-id').innerText = id; } });
@@ -937,7 +1097,7 @@
         document.getElementById('connection-status').innerText = "Opponent Connected! Starting Game..."; isMultiplayerActive = true;
         networkConn.on('data', (data) => {
             if (data.type === 'sync_board') { document.getElementById('opp-score').innerText = data.score; drawOpponentBoard(data.board); }
-            if (data.type === 'game_over') { triggerGameOver(true); } // triggers win screen
+            if (data.type === 'game_over') { triggerGameOver(true); } 
         });
         setTimeout(() => { selectedModeId = 'classic'; startGame(); }, 2000);
     }
@@ -948,7 +1108,7 @@
         initPeerJS(false); peer.on('open', () => { document.getElementById('connection-status').innerText = "Joining Lobby..."; networkConn = peer.connect(hostId); setupGameConnection(); });
     });
 
-        document.getElementById('btn-copy').addEventListener('click', () => {
+    document.getElementById('btn-copy').addEventListener('click', () => {
         const codeText = document.getElementById('display-id').innerText;
         const btn = document.getElementById('btn-copy');
         
@@ -957,33 +1117,24 @@
             setTimeout(() => btn.innerText = 'COPY', 2000);
         };
 
-        // 1. Try modern secure clipboard API first
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(codeText)
                 .then(showCopied)
                 .catch(() => fallbackCopy(codeText, showCopied));
         } else {
-            // 2. Fallback for local testing (file://) and older browsers
             fallbackCopy(codeText, showCopied);
         }
     });
 
-    // Invisible text box fallback method
     function fallbackCopy(text, callback) {
         const textArea = document.createElement("textarea");
         textArea.value = text;
-        // Keep it out of view so the screen doesn't jump
         textArea.style.position = "fixed"; 
         textArea.style.top = "-9999px";
         document.body.appendChild(textArea);
         
         textArea.select();
-        try {
-            document.execCommand('copy');
-            callback();
-        } catch (err) {
-            console.error('Fallback copy failed', err);
-        }
+        try { document.execCommand('copy'); callback(); } catch (err) { console.error('Fallback copy failed', err); }
         document.body.removeChild(textArea);
     }
 
